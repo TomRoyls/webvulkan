@@ -43,9 +43,8 @@ add_library(webvulkan SHARED
     src/commands/copy.c
     src/commands/sync.c
     src/commands/render_pass.c
-    src/shaders/spirv.c
-    src/shaders/wgsl.c
-    src/shaders/naga.c
+    src/shaders/spirv_parser.c
+    src/shaders/wgsl_gen.c
     src/sync/barrier.c
     src/memory/device_memory.c
     src/memory/allocator.c

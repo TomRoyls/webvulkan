@@ -1,5 +1,8 @@
 #include "webvulkan_internal.h"
-#include <naga.h>
+#include "../shaders/spirv_parser.h"
+#include "../shaders/wgsl_gen.h"
+#include <stdlib.h>
+#include <string.h>
 
 static void destroy_shader_module(void* obj) {
     VkShaderModule module = (VkShaderModule)obj;
@@ -20,17 +23,22 @@ static VkResult spirv_to_wgsl(
     size_t spirv_size,
     char** wgsl_out)
 {
-    naga_module_t module = {0};
-    naga_error_t error = naga_parse_spirv(spirv_code, spirv_size / 4, &module);
-    if (error != NAGA_OK) {
+    WgvkSpvModule module = {0};
+    if (wgvk_spirv_parse(&module, spirv_code, spirv_size) != 0) {
         return VK_ERROR_INVALID_SHADER_NV;
     }
     
-    char* wgsl = NULL;
-    error = naga_emit_wgsl(&module, &wgsl);
-    naga_module_free(&module);
+    WgvkWgslGenerator gen = {0};
+    if (wgvk_wgsl_init(&gen, &module, WGVK_SPV_EXEC_MODEL_VERTEX) != 0) {
+        wgvk_spirv_free(&module);
+        return VK_ERROR_INVALID_SHADER_NV;
+    }
     
-    if (error != NAGA_OK || !wgsl) {
+    char* wgsl = wgvk_wgsl_generate(&gen);
+    wgvk_wgsl_free(&gen);
+    wgvk_spirv_free(&module);
+    
+    if (!wgsl) {
         return VK_ERROR_INVALID_SHADER_NV;
     }
     
