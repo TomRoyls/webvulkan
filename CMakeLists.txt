@@ -43,6 +43,7 @@ add_library(webvulkan SHARED
     src/commands/copy.c
     src/commands/sync.c
     src/commands/render_pass.c
+    src/commands/subpass.c
     src/shaders/spirv_parser.c
     src/shaders/wgsl_gen.c
     src/sync/barrier.c
