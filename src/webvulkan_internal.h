@@ -55,6 +55,7 @@ struct VkDevice_T {
     VkPhysicalDevice physical_device;
     WGPUDevice wgpu_device;
     WGPUQueue wgpu_queue;
+    WGPUBuffer push_constant_buffer;
     uint32_t queue_family_index;
 };
 
@@ -168,6 +169,7 @@ struct VkCommandBuffer_T {
     bool recording;
     bool in_render_pass;
     bool in_compute_pass;
+    uint32_t push_constant_offset;
     
     VkPipeline bound_pipeline;
     VkPipelineLayout bound_layout;

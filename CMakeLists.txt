@@ -46,6 +46,7 @@ add_library(webvulkan SHARED
     src/shaders/spirv_parser.c
     src/shaders/wgsl_gen.c
     src/sync/barrier.c
+    src/sync/push_constants.c
     src/memory/device_memory.c
     src/memory/allocator.c
     src/util/list.c
