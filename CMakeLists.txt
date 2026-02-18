@@ -13,8 +13,9 @@ if(WEBVULKAN_WASM)
         message(FATAL_ERROR "WEBVULKAN_WASM requires Emscripten toolchain")
     endif()
     set(USE_WEBGPU ON)
-    add_compile_options(-sUSE_WEBGPU=1)
-    add_link_options(-sUSE_WEBGPU=1 -sALLOW_MEMORY_GROWTH=1)
+    add_compile_options(--use-port=emdawnwebgpu)
+    add_link_options(--use-port=emdawnwebgpu -sALLOW_MEMORY_GROWTH=1 --bind)
+    set(CMAKE_EXECUTABLE_SUFFIX ".js")
 endif()
 
 add_library(webvulkan SHARED
