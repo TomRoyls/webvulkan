@@ -90,11 +90,12 @@ VkResult vkCreateShaderModule(
             return result;
         }
         
-        WGPUShaderModuleWGSLDescriptor wgsl_desc = {
+        WGPUShaderSourceWGSL wgsl_desc = {
             .chain = {
+                .next = NULL,
                 .sType = WGPUSType_ShaderSourceWGSL,
             },
-            .code = module->wgsl_source,
+            .code = (WGPUStringView){ .data = module->wgsl_source, .length = WGPU_STRLEN },
         };
         
         WGPUShaderModuleDescriptor desc = {

@@ -34,7 +34,7 @@ void vkCmdBeginRenderPass(
     
     commandBuffer->in_render_pass = true;
     
-    WGPUColorAttachment color_attachments[WGVK_MAX_COLOR_ATTACHMENTS] = {0};
+    WGPURenderPassColorAttachment color_attachments[WGVK_MAX_COLOR_ATTACHMENTS] = {0};
     uint32_t color_count = 0;
     
     WGPURenderPassDepthStencilAttachment depth_attachment = {0};
@@ -176,7 +176,7 @@ void vkCmdSetBlendConstants(
     
     wgpuRenderPassEncoderSetBlendConstant(
         commandBuffer->wgpu_render_pass,
-        (WGPUColor){
+        &(WGPUColor){
             blendConstants[0],
             blendConstants[1],
             blendConstants[2],

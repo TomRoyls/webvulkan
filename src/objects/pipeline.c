@@ -120,7 +120,7 @@ VkResult vkCreateGraphicsPipelines(
             for (uint32_t s = 0; s < info->stageCount; s++) {
                 if (info->pStages[s].stage == 0) {
                     vertex_state.module = info->pStages[s].module->wgpu_shader;
-                    vertex_state.entryPoint = info->pStages[s].pName;
+                    vertex_state.entryPoint = (WGPUStringView){ .data = info->pStages[s].pName, .length = WGPU_STRLEN };
                 }
             }
         }
@@ -130,7 +130,7 @@ VkResult vkCreateGraphicsPipelines(
             for (uint32_t s = 0; s < info->stageCount; s++) {
                 if (info->pStages[s].stage == 1) {
                     fragment_state.module = info->pStages[s].module->wgpu_shader;
-                    fragment_state.entryPoint = info->pStages[s].pName;
+                    fragment_state.entryPoint = (WGPUStringView){ .data = info->pStages[s].pName, .length = WGPU_STRLEN };
                 }
             }
         }
@@ -196,7 +196,7 @@ VkResult vkCreateComputePipelines(
             .layout = info->layout ? info->layout->wgpu_layout : NULL,
             .compute = {
                 .module = info->stage.module->wgpu_shader,
-                .entryPoint = info->stage.pName,
+                .entryPoint = (WGPUStringView){ .data = info->stage.pName, .length = WGPU_STRLEN },
             },
         };
         

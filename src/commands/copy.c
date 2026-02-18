@@ -81,7 +81,7 @@ void vkCmdCopyBufferToImage(
     }* regions = pRegions;
     
     for (uint32_t i = 0; i < regionCount; i++) {
-        WGPUImageCopyBuffer src = {
+        WGPUTexelCopyBufferInfo src = {
             .layout = {
                 .offset = regions[i].bufferOffset,
                 .bytesPerRow = regions[i].bufferRowLength > 0 ? regions[i].bufferRowLength * 4 : WGPU_COPY_STRIDE_UNDEFINED,
@@ -90,21 +90,21 @@ void vkCmdCopyBufferToImage(
             .buffer = srcBuffer->wgpu_buffer,
         };
         
-        WGPUImageCopyTexture dst = {
+        WGPUTexelCopyTextureInfo dst = {
             .texture = dstImage->wgpu_texture,
             .mipLevel = regions[i].imageSubresource[0],
             .origin = {
-                regions[i].imageOffset[0],
-                regions[i].imageOffset[1],
-                regions[i].imageOffset[2],
+                .x = regions[i].imageOffset[0],
+                .y = regions[i].imageOffset[1],
+                .z = regions[i].imageOffset[2],
             },
             .aspect = WGPUTextureAspect_All,
         };
         
         WGPUExtent3D size = {
-            regions[i].imageExtent[0],
-            regions[i].imageExtent[1],
-            regions[i].imageExtent[2],
+            .width = regions[i].imageExtent[0],
+            .height = regions[i].imageExtent[1],
+            .depthOrArrayLayers = regions[i].imageExtent[2],
         };
         
         wgpuCommandEncoderCopyBufferToTexture(
@@ -139,18 +139,18 @@ void vkCmdCopyImageToBuffer(
     }* regions = pRegions;
     
     for (uint32_t i = 0; i < regionCount; i++) {
-        WGPUImageCopyTexture src = {
+        WGPUTexelCopyTextureInfo src = {
             .texture = srcImage->wgpu_texture,
             .mipLevel = regions[i].imageSubresource[0],
             .origin = {
-                regions[i].imageOffset[0],
-                regions[i].imageOffset[1],
-                regions[i].imageOffset[2],
+                .x = regions[i].imageOffset[0],
+                .y = regions[i].imageOffset[1],
+                .z = regions[i].imageOffset[2],
             },
             .aspect = WGPUTextureAspect_All,
         };
         
-        WGPUImageCopyBuffer dst = {
+        WGPUTexelCopyBufferInfo dst = {
             .layout = {
                 .offset = regions[i].bufferOffset,
                 .bytesPerRow = regions[i].bufferRowLength > 0 ? regions[i].bufferRowLength * 4 : WGPU_COPY_STRIDE_UNDEFINED,
@@ -160,9 +160,9 @@ void vkCmdCopyImageToBuffer(
         };
         
         WGPUExtent3D size = {
-            regions[i].imageExtent[0],
-            regions[i].imageExtent[1],
-            regions[i].imageExtent[2],
+            .width = regions[i].imageExtent[0],
+            .height = regions[i].imageExtent[1],
+            .depthOrArrayLayers = regions[i].imageExtent[2],
         };
         
         wgpuCommandEncoderCopyTextureToBuffer(

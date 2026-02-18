@@ -54,6 +54,12 @@ add_library(webvulkan SHARED
     src/util/hash_table.c
 )
 
+# Add WebGPU stubs for native builds (non-WASM)
+if(NOT WEBVULKAN_WASM)
+    target_sources(webvulkan PRIVATE src/stubs/webgpu_stubs.c)
+    target_compile_definitions(webvulkan PRIVATE WGPU_SHARED_LIBRARY)
+endif()
+
 target_include_directories(webvulkan
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

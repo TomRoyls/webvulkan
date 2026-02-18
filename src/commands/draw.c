@@ -49,7 +49,8 @@ void vkCmdBindVertexBuffers(
                     commandBuffer->wgpu_render_pass,
                     slot,
                     pBuffers[i]->wgpu_buffer,
-                    pOffsets[i]);
+                    pOffsets[i],
+                    pBuffers[i]->size - pOffsets[i]);
             }
         }
     }

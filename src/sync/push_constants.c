@@ -6,7 +6,7 @@ void wgvk_push_constants_init(VkDevice device) {
     
     WGPUBufferDescriptor desc = {0};
     desc.nextInChain = NULL;
-    desc.label = "PushConstants";
+    desc.label = (WGPUStringView){ .data = "PushConstants", .length = WGPU_STRLEN };
     desc.usage = WGPUBufferUsage_Uniform | WGPUBufferUsage_CopyDst;
     desc.size = WGVK_PUSH_CONSTANT_SIZE * 1024;
     desc.mappedAtCreation = false;

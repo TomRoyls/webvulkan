@@ -11,18 +11,20 @@ static void destroy_device(void* obj) {
     free(device);
 }
 
-static void on_device_lost(WGPUDeviceLostReason reason, char const* message, void* userdata) {
-    (void)reason;
-    (void)userdata;
-    if (message) {
-    }
-}
+typedef struct {
+    VkDevice device;
+    bool completed;
+    WGPUDevice wgpu_device;
+} DeviceRequestContext;
 
-static void on_device_error(WGPUErrorType type, char const* message, void* userdata) {
-    (void)type;
-    (void)userdata;
-    if (message) {
+static void on_device_request_done(WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message, void* userdata1, void* userdata2) {
+    (void)message;
+    (void)userdata2;
+    DeviceRequestContext* ctx = (DeviceRequestContext*)userdata1;
+    if (status == WGPURequestDeviceStatus_Success) {
+        ctx->wgpu_device = device;
     }
+    ctx->completed = true;
 }
 
 VkResult vkCreateDevice(
@@ -32,8 +34,9 @@ VkResult vkCreateDevice(
     VkDevice* pDevice)
 {
     (void)pAllocator;
+    (void)pCreateInfo;
     
-    if (!physicalDevice || !pCreateInfo || !pDevice) {
+    if (!physicalDevice || !pDevice) {
         return VK_ERROR_INITIALIZATION_FAILED;
     }
     
@@ -47,23 +50,32 @@ VkResult vkCreateDevice(
     device->wgpu_device = NULL;
     device->wgpu_queue = NULL;
     device->queue_family_index = 0;
+    device->push_constant_buffer = NULL;
     
-    WGPUDeviceDescriptor desc = {};
-    desc.deviceLostCallback = on_device_lost;
-    desc.uncapturedErrorCallback = on_device_error;
+    DeviceRequestContext ctx = { .device = device, .completed = false, .wgpu_device = NULL };
+    
+    WGPUDeviceDescriptor desc = WGPU_DEVICE_DESCRIPTOR_INIT;
+    
+    WGPURequestDeviceCallbackInfo callbackInfo = {
+        .nextInChain = NULL,
+        .mode = WGPUCallbackMode_AllowProcessEvents,
+        .callback = on_device_request_done,
+        .userdata1 = &ctx,
+        .userdata2 = NULL,
+    };
     
     if (physicalDevice->wgpu_adapter) {
-        device->wgpu_device = wgpuAdapterCreateDevice(physicalDevice->wgpu_adapter, &desc);
-    } else {
-        device->wgpu_device = wgpuCreateDevice(&desc);
+        wgpuAdapterRequestDevice(physicalDevice->wgpu_adapter, &desc, callbackInfo);
     }
     
-    if (!device->wgpu_device) {
+    if (!ctx.completed || !ctx.wgpu_device) {
         free(device);
         return VK_ERROR_INITIALIZATION_FAILED;
     }
     
+    device->wgpu_device = ctx.wgpu_device;
     device->wgpu_queue = wgpuDeviceGetQueue(device->wgpu_device);
+    
     if (!device->wgpu_queue) {
         wgpuDeviceRelease(device->wgpu_device);
         free(device);
@@ -103,7 +115,7 @@ void vkGetDeviceQueue(
     wgvk_object_init(&queue->base, NULL);
     queue->device = device;
     queue->wgpu_queue = device->wgpu_queue;
-    wgpuQueueReference(queue->wgpu_queue);
+    wgpuQueueAddRef(queue->wgpu_queue);
     queue->queue_family_index = queueFamilyIndex;
     queue->queue_index = queueIndex;
     

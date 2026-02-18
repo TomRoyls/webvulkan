@@ -93,19 +93,22 @@ VkResult vkCreateDescriptorSetLayout(
                 entry_count++;
                 break;
             case 6: // VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-            case 7: // VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
                 entry->buffer.type = WGPUBufferBindingType_Uniform;
-                entry->buffer.hasDynamicOffset = (binding->descriptorType == 7);
+                entry->buffer.hasDynamicOffset = false;
                 entry_count++;
                 break;
             case 7: // VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-            case 8: // VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
                 entry->buffer.type = WGPUBufferBindingType_Storage;
-                entry->buffer.hasDynamicOffset = (binding->descriptorType == 8);
+                entry->buffer.hasDynamicOffset = false;
                 entry_count++;
                 break;
-            case 10: // VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+            case 8: // VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
                 entry->buffer.type = WGPUBufferBindingType_Uniform;
+                entry->buffer.hasDynamicOffset = true;
+                entry_count++;
+                break;
+            case 9: // VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
+                entry->buffer.type = WGPUBufferBindingType_Storage;
                 entry->buffer.hasDynamicOffset = true;
                 entry_count++;
                 break;
@@ -117,7 +120,7 @@ VkResult vkCreateDescriptorSetLayout(
     // Create WebGPU bind group layout
     WGPUBindGroupLayoutDescriptor desc = {0};
     desc.nextInChain = NULL;
-    desc.label = "VkDescriptorSetLayout";
+    desc.label = (WGPUStringView){ .data = "VkDescriptorSetLayout", .length = WGPU_STRLEN };
     desc.entryCount = entry_count;
     desc.entries = entries;
     

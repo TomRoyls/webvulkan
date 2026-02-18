@@ -71,7 +71,7 @@ VkResult vkCreatePipelineLayout(
     // Create WebGPU pipeline layout
     WGPUPipelineLayoutDescriptor desc = {0};
     desc.nextInChain = NULL;
-    desc.label = "VkPipelineLayout";
+    desc.label = (WGPUStringView){ .data = "VkPipelineLayout", .length = WGPU_STRLEN };
     desc.bindGroupLayoutCount = count;
     desc.bindGroupLayouts = bind_group_layouts;
     
@@ -93,9 +93,3 @@ void vkDestroyPipelineLayout(
         wgvk_object_release(&pipelineLayout->base);
     }
 }
-
-typedef struct VkPushConstantRange {
-    VkFlags stageFlags;
-    uint32_t offset;
-    uint32_t size;
-} VkPushConstantRange;

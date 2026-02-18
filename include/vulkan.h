@@ -295,7 +295,7 @@ typedef struct VkImageCreateInfo {
 typedef struct VkImageViewCreateInfo {
     VkStructureType sType;
     const void* pNext;
-    VkImageView image;
+    VkImage image;
     uint32_t viewType;
     uint32_t format;
     uint32_t components[4];
@@ -352,6 +352,12 @@ typedef struct VkComputePipelineCreateInfo {
     int32_t basePipelineIndex;
 } VkComputePipelineCreateInfo;
 
+typedef struct VkPushConstantRange {
+    uint32_t stageFlags;
+    uint32_t offset;
+    uint32_t size;
+} VkPushConstantRange;
+
 typedef struct VkPipelineLayoutCreateInfo {
     VkStructureType sType;
     const void* pNext;
@@ -359,7 +365,7 @@ typedef struct VkPipelineLayoutCreateInfo {
     uint32_t setLayoutCount;
     const VkDescriptorSetLayout* pSetLayouts;
     uint32_t pushConstantRangeCount;
-    const void* pPushConstantRanges;
+    const VkPushConstantRange* pPushConstantRanges;
 } VkPipelineLayoutCreateInfo;
 
 typedef struct VkRenderPassCreateInfo {
