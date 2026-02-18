@@ -199,6 +199,15 @@ void wgpuRenderPassEncoderSetIndexBuffer(WGPURenderPassEncoder renderPassEncoder
 void wgpuRenderPassEncoderSetBlendConstant(WGPURenderPassEncoder renderPassEncoder, WGPUColor const * color) {
     (void)renderPassEncoder; (void)color;
 }
+void wgpuRenderPassEncoderSetViewport(WGPURenderPassEncoder renderPassEncoder, float x, float y, float width, float height, float minDepth, float maxDepth) {
+    (void)renderPassEncoder; (void)x; (void)y; (void)width; (void)height; (void)minDepth; (void)maxDepth;
+}
+void wgpuRenderPassEncoderSetScissorRect(WGPURenderPassEncoder renderPassEncoder, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+    (void)renderPassEncoder; (void)x; (void)y; (void)width; (void)height;
+}
+void wgpuRenderPassEncoderSetStencilReference(WGPURenderPassEncoder renderPassEncoder, uint32_t reference) {
+    (void)renderPassEncoder; (void)reference;
+}
 void wgpuRenderPassEncoderDraw(WGPURenderPassEncoder renderPassEncoder, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance) {
     (void)renderPassEncoder; (void)vertexCount; (void)instanceCount; (void)firstVertex; (void)firstInstance;
 }
@@ -229,6 +238,12 @@ void wgpuComputePassEncoderSetBindGroup(WGPUComputePassEncoder computePassEncode
 void wgpuComputePassEncoderDispatchWorkgroups(WGPUComputePassEncoder computePassEncoder, uint32_t workgroupCountX, uint32_t workgroupCountY, uint32_t workgroupCountZ) {
     (void)computePassEncoder; (void)workgroupCountX; (void)workgroupCountY; (void)workgroupCountZ;
 }
+void wgpuComputePassEncoderDispatchWorkgroupsIndirect(WGPUComputePassEncoder computePassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset) {
+    (void)computePassEncoder; (void)indirectBuffer; (void)indirectOffset;
+}
 void wgpuComputePassEncoderEnd(WGPUComputePassEncoder computePassEncoder) { (void)computePassEncoder; }
 void wgpuComputePassEncoderAddRef(WGPUComputePassEncoder computePassEncoder) { (void)computePassEncoder; }
 void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder) { (void)computePassEncoder; }
+
+/* Texture */
+WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture) { (void)texture; return WGPUTextureFormat_RGBA8Unorm; }
