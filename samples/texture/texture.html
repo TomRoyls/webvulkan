@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>webvulkan - Texture Mapping Example</title>
+    <style>
+        body { margin: 0; padding: 0; background: #1a1a2e; color: #eee; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { padding: 20px; text-align: center; }
+        h1 { margin: 0; font-size: 1.5rem; color: #00d4ff; }
+        #canvas-container { display: flex; justify-content: center; align-items: center; flex: 1; }
+        canvas { background: #000; border: 2px solid #00d4ff; border-radius: 8px; }
+        #status { padding: 10px; font-size: 0.9rem; color: #888; }
+        #status.success { color: #44ff44; }
+        .back-link { position: fixed; top: 20px; left: 20px; color: #00d4ff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-link">← Back to Examples</a>
+    <header><h1>Texture Mapping</h1></header>
+    <div id="canvas-container"><canvas id="canvas" width="800" height="600"></canvas></div>
+    <div id="status">Initializing WebGPU...</div>
+    
+    <script>
+        async function main() {
+            const status = document.getElementById('status');
+            const canvas = document.getElementById('canvas');
+            
+            if (!navigator.gpu) { status.textContent = 'WebGPU not supported'; status.className = 'error'; return; }
+            const adapter = await navigator.gpu.requestAdapter();
+            if (!adapter) { status.textContent = 'No GPU adapter'; status.className = 'error'; return; }
+            
+            const device = await adapter.requestDevice();
+            const context = canvas.getContext('webgpu');
+            const format = navigator.gpu.getPreferredCanvasFormat();
+            context.configure({ device, format, alphaMode: 'premultiplied' });
+            
+            // Create a procedural checkerboard texture
+            const textureSize = 64;
+            const textureData = new Uint8Array(textureSize * textureSize * 4);
+            for (let y = 0; y < textureSize; y++) {
+                for (let x = 0; x < textureSize; x++) {
+                    const i = (y * textureSize + x) * 4;
+                    const checker = ((x >> 3) + (y >> 3)) & 1;
+                    textureData[i + 0] = checker ? 255 : 50;   // R
+                    textureData[i + 1] = checker ? 200 : 50;   // G
+                    textureData[i + 2] = checker ? 100 : 80;   // B
+                    textureData[i + 3] = 255;                   // A
+                }
+            }
+            
+            const texture = device.createTexture({
+                size: [textureSize, textureSize],
+                format: 'rgba8unorm',
+                usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
+            });
+            
+            device.queue.writeTexture({ texture }, textureData, { bytesPerRow: textureSize * 4 }, [textureSize, textureSize]);
+            
+            const sampler = device.createSampler({ magFilter: 'linear', minFilter: 'linear' });
+            
+            const vertices = new Float32Array([
+                // x, y, u, v
+                 0.0, -0.5,  0.5, 1.0,
+                 0.5,  0.5,  1.0, 0.0,
+                -0.5,  0.5,  0.0, 0.0,
+            ]);
+            
+            const vertexBuffer = device.createBuffer({
+                size: vertices.byteLength,
+                usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+            });
+            device.queue.writeBuffer(vertexBuffer, 0, vertices);
+            
+            const shader = device.createShaderModule({ code: `
+                struct VertexOutput { @builtin(position) pos: vec4f, @location(0) uv: vec2f }
+                @vertex fn vs(@location(0) position: vec2f, @location(1) uv: vec2f) -> VertexOutput {
+                    var out: VertexOutput;
+                    out.pos = vec4f(position, 0.0, 1.0);
+                    out.uv = uv;
+                    return out;
+                }
+                @group(0) @binding(0) var tex: texture_2d<f32>;
+                @group(0) @binding(1) var samp: sampler;
+                @fragment fn fs(@location(0) uv: vec2f) -> @location(0) vec4f {
+                    return textureSample(tex, samp, uv);
+                }
+            `});
+            
+            const bindGroupLayout = device.createBindGroupLayout({
+                entries: [
+                    { binding: 0, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
+                    { binding: 1, visibility: GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } }
+                ]
+            });
+            
+            const pipeline = device.createRenderPipeline({
+                layout: device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] }),
+                vertex: {
+                    module: shader, entryPoint: 'vs',
+                    buffers: [{ arrayStride: 16, attributes: [
+                        { shaderLocation: 0, offset: 0, format: 'float32x2' },
+                        { shaderLocation: 1, offset: 8, format: 'float32x2' }
+                    ]}]
+                },
+                fragment: { module: shader, entryPoint: 'fs', targets: [{ format }] },
+                primitive: { topology: 'triangle-list' }
+            });
+            
+            const bindGroup = device.createBindGroup({
+                layout: bindGroupLayout,
+                entries: [
+                    { binding: 0, resource: texture.createView() },
+                    { binding: 1, resource: sampler }
+                ]
+            });
+            
+            function render() {
+                const encoder = device.createCommandEncoder();
+                const pass = encoder.beginRenderPass({
+                    colorAttachments: [{ view: context.getCurrentTexture().createView(), clearValue: { r: 0.1, g: 0.1, b: 0.18, a: 1 }, loadOp: 'clear', storeOp: 'store' }]
+                });
+                pass.setPipeline(pipeline);
+                pass.setVertexBuffer(0, vertexBuffer);
+                pass.setBindGroup(0, bindGroup);
+                pass.draw(3);
+                pass.end();
+                device.queue.submit([encoder.finish()]);
+                requestAnimationFrame(render);
+            }
+            
+            status.textContent = 'Procedural checkerboard texture (64x64)';
+            status.className = 'success';
+            render();
+        }
+        main().catch(e => { document.getElementById('status').textContent = 'Error: ' + e.message; document.getElementById('status').className = 'error'; });
+    </script>
+</body>
+</html>

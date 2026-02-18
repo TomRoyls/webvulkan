@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>webvulkan - Descriptor Sets Example</title>
+    <style>
+        body { margin: 0; padding: 0; background: #1a1a2e; color: #eee; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { padding: 20px; text-align: center; }
+        h1 { margin: 0; font-size: 1.5rem; color: #00d4ff; }
+        #canvas-container { display: flex; justify-content: center; align-items: center; flex: 1; }
+        canvas { background: #000; border: 2px solid #00d4ff; border-radius: 8px; }
+        #status { padding: 10px; font-size: 0.9rem; color: #888; }
+        #status.success { color: #44ff44; }
+        .back-link { position: fixed; top: 20px; left: 20px; color: #00d4ff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-link">← Back to Examples</a>
+    <header><h1>Descriptor Sets</h1></header>
+    <div id="canvas-container"><canvas id="canvas" width="800" height="600"></canvas></div>
+    <div id="status">Initializing WebGPU...</div>
+    
+    <script>
+        async function main() {
+            const status = document.getElementById('status');
+            const canvas = document.getElementById('canvas');
+            
+            if (!navigator.gpu) { status.textContent = 'WebGPU not supported'; status.className = 'error'; return; }
+            const adapter = await navigator.gpu.requestAdapter();
+            if (!adapter) { status.textContent = 'No GPU adapter'; status.className = 'error'; return; }
+            
+            const device = await adapter.requestDevice();
+            const context = canvas.getContext('webgpu');
+            const format = navigator.gpu.getPreferredCanvasFormat();
+            context.configure({ device, format, alphaMode: 'premultiplied' });
+            
+            // Create uniform buffer (simulating descriptor set binding)
+            const uniformBuffer = device.createBuffer({ 
+                size: 32, // two vec4s: color + offset
+                usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST 
+            });
+            
+            // Create sampler (another descriptor type)
+            const sampler = device.createSampler({ magFilter: 'linear', minFilter: 'linear' });
+            
+            // Create bind group layout (descriptor set layout)
+            const bindGroupLayout = device.createBindGroupLayout({
+                entries: [
+                    { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+                    { binding: 1, visibility: GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } }
+                ]
+            });
+            
+            // Create bind group (descriptor set)
+            const bindGroup = device.createBindGroup({
+                layout: bindGroupLayout,
+                entries: [
+                    { binding: 0, resource: { buffer: uniformBuffer } },
+                    { binding: 1, resource: sampler }
+                ]
+            });
+            
+            const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+            
+            const shader = device.createShaderModule({ code: `
+                struct Uniforms { color: vec4f, offset: vec4f }
+                @group(0) @binding(0) var<uniform> uniforms: Uniforms;
+                @vertex fn vs(@builtin(vertex_index) vi: u32) -> @builtin(position) vec4f {
+                    var pos = array<vec2f, 3>(vec2f(0.0, -0.5), vec2f(0.5, 0.5), vec2f(-0.5, 0.5));
+                    return vec4f(pos[vi] + uniforms.offset.xy, 0.0, 1.0);
+                }
+                @fragment fn fs() -> @location(0) vec4f { return uniforms.color; }
+            `});
+            
+            const pipeline = device.createRenderPipeline({
+                layout: pipelineLayout,
+                vertex: { module: shader, entryPoint: 'vs' },
+                fragment: { module: shader, entryPoint: 'fs', targets: [{ format }] },
+                primitive: { topology: 'triangle-list' }
+            });
+            
+            let time = 0;
+            function render() {
+                time += 0.02;
+                const data = new Float32Array([
+                    Math.sin(time) * 0.5 + 0.5, Math.sin(time + 2) * 0.5 + 0.5, Math.sin(time + 4) * 0.5 + 0.5, 1.0, // color
+                    Math.sin(time * 0.5) * 0.2, Math.cos(time * 0.7) * 0.2, 0, 0 // offset
+                ]);
+                device.queue.writeBuffer(uniformBuffer, 0, data);
+                
+                const encoder = device.createCommandEncoder();
+                const pass = encoder.beginRenderPass({
+                    colorAttachments: [{ view: context.getCurrentTexture().createView(), clearValue: { r: 0.1, g: 0.1, b: 0.18, a: 1 }, loadOp: 'clear', storeOp: 'store' }]
+                });
+                pass.setPipeline(pipeline);
+                pass.setBindGroup(0, bindGroup);
+                pass.draw(3);
+                pass.end();
+                device.queue.submit([encoder.finish()]);
+                requestAnimationFrame(render);
+            }
+            
+            status.textContent = 'Descriptor sets with uniform buffer + sampler';
+            status.className = 'success';
+            render();
+        }
+        main().catch(e => { document.getElementById('status').textContent = 'Error: ' + e.message; document.getElementById('status').className = 'error'; });
+    </script>
+</body>
+</html>

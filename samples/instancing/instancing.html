@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>webvulkan - Instancing Example</title>
+    <style>
+        body { margin: 0; padding: 0; background: #1a1a2e; color: #eee; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { padding: 20px; text-align: center; }
+        h1 { margin: 0; font-size: 1.5rem; color: #00d4ff; }
+        #canvas-container { display: flex; justify-content: center; align-items: center; flex: 1; }
+        canvas { background: #000; border: 2px solid #00d4ff; border-radius: 8px; }
+        #status { padding: 10px; font-size: 0.9rem; color: #888; }
+        #status.success { color: #44ff44; }
+        .back-link { position: fixed; top: 20px; left: 20px; color: #00d4ff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-link">← Back to Examples</a>
+    <header><h1>Instancing</h1></header>
+    <div id="canvas-container"><canvas id="canvas" width="800" height="600"></canvas></div>
+    <div id="status">Initializing WebGPU...</div>
+    
+    <script>
+        async function main() {
+            const status = document.getElementById('status');
+            const canvas = document.getElementById('canvas');
+            
+            if (!navigator.gpu) { status.textContent = 'WebGPU not supported'; status.className = 'error'; return; }
+            const adapter = await navigator.gpu.requestAdapter();
+            if (!adapter) { status.textContent = 'No GPU adapter'; status.className = 'error'; return; }
+            
+            const device = await adapter.requestDevice();
+            const context = canvas.getContext('webgpu');
+            const format = navigator.gpu.getPreferredCanvasFormat();
+            context.configure({ device, format, alphaMode: 'premultiplied' });
+            
+            const instanceCount = 100;
+            const instanceData = new Float32Array(instanceCount * 4); // x, y, r, g, b per instance
+            
+            for (let i = 0; i < instanceCount; i++) {
+                instanceData[i * 4 + 0] = (Math.random() - 0.5) * 1.8;     // x
+                instanceData[i * 4 + 1] = (Math.random() - 0.5) * 1.4;     // y
+                instanceData[i * 4 + 2] = Math.random();                    // r
+                instanceData[i * 4 + 3] = Math.random();                    // g
+            }
+            
+            const instanceBuffer = device.createBuffer({
+                size: instanceData.byteLength,
+                usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+            });
+            device.queue.writeBuffer(instanceBuffer, 0, instanceData);
+            
+            const shader = device.createShaderModule({ code: `
+                struct Instance { @location(1) offset: vec2f, @location(2) color: vec2f }
+                @vertex fn vs(@builtin(vertex_index) vi: u32, inst: Instance) -> @builtin(position) vec4f {
+                    var pos = array<vec2f, 3>(vec2f(0.0, -0.05), vec2f(0.05, 0.05), vec2f(-0.05, 0.05));
+                    return vec4f(pos[vi] + inst.offset, 0.0, 1.0);
+                }
+                @fragment fn fs(@location(1) offset: vec2f, @location(2) color: vec2f) -> @location(0) vec4f {
+                    return vec4f(color.x, color.y, 0.5 + 0.5 * sin(offset.x * 10.0), 1.0);
+                }
+            `});
+            
+            const pipeline = device.createRenderPipeline({
+                layout: 'auto',
+                vertex: {
+                    module: shader, entryPoint: 'vs',
+                    buffers: [{
+                        arrayStride: 16,
+                        stepMode: 'instance',
+                        attributes: [
+                            { shaderLocation: 1, offset: 0, format: 'float32x2' },
+                            { shaderLocation: 2, offset: 8, format: 'float32x2' }
+                        ]
+                    }]
+                },
+                fragment: { module: shader, entryPoint: 'fs', targets: [{ format }] },
+                primitive: { topology: 'triangle-list' }
+            });
+            
+            function render() {
+                const encoder = device.createCommandEncoder();
+                const pass = encoder.beginRenderPass({
+                    colorAttachments: [{ view: context.getCurrentTexture().createView(), clearValue: { r: 0.1, g: 0.1, b: 0.18, a: 1 }, loadOp: 'clear', storeOp: 'store' }]
+                });
+                pass.setPipeline(pipeline);
+                pass.setVertexBuffer(0, instanceBuffer);
+                pass.draw(3, instanceCount);
+                pass.end();
+                device.queue.submit([encoder.finish()]);
+                requestAnimationFrame(render);
+            }
+            
+            status.textContent = `${instanceCount} instanced triangles, single draw call`;
+            status.className = 'success';
+            render();
+        }
+        main().catch(e => { document.getElementById('status').textContent = 'Error: ' + e.message; document.getElementById('status').className = 'error'; });
+    </script>
+</body>
+</html>
