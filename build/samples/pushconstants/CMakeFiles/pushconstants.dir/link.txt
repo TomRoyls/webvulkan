@@ -1,0 +1,1 @@
+/usr/bin/cc -Wl,--dependency-file=CMakeFiles/pushconstants.dir/link.d CMakeFiles/pushconstants.dir/main.c.o -o pushconstants  -Wl,-rpath,/home/georg/code/webvulkan/build ../../libwebvulkan.so

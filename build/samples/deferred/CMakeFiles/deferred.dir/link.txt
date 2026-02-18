@@ -1,0 +1,1 @@
+/usr/bin/cc -Wl,--dependency-file=CMakeFiles/deferred.dir/link.d CMakeFiles/deferred.dir/main.c.o -o deferred  -Wl,-rpath,/home/georg/code/webvulkan/build ../../libwebvulkan.so

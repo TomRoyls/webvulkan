@@ -1,0 +1,15 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/georg/code/webvulkan/build/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build/samples/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build/samples/triangle/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build/samples/pipelines/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build/samples/pushconstants/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build/samples/computeshader/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build/samples/deferred/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build/samples/shadowmapping/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build/tests/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

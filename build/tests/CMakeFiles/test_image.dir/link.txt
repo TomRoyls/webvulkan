@@ -1,0 +1,1 @@
+/usr/bin/cc -Wl,--dependency-file=CMakeFiles/test_image.dir/link.d CMakeFiles/test_image.dir/test_image.c.o -o test_image  -Wl,-rpath,/home/georg/code/webvulkan/build ../libwebvulkan.so

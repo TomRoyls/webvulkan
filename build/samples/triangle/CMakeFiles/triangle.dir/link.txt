@@ -1,0 +1,1 @@
+/usr/bin/cc -Wl,--dependency-file=CMakeFiles/triangle.dir/link.d CMakeFiles/triangle.dir/main.c.o -o triangle  -Wl,-rpath,/home/georg/code/webvulkan/build ../../libwebvulkan.so
