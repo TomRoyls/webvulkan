@@ -32,13 +32,16 @@ foreach(SHADER IN LISTS SHADER_SOURCES)
     
     if(SHADER_EXT STREQUAL ".vert")
         set(STAGE "--vertex")
+        set(SUFFIX "vert")
     elseif(SHADER_EXT STREQUAL ".frag")
         set(STAGE "--fragment")
+        set(SUFFIX "frag")
     elseif(SHADER_EXT STREQUAL ".comp")
         set(STAGE "--compute")
+        set(SUFFIX "comp")
     endif()
     
-    set(OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${SHADER_NAME}.spv")
+    set(OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${SHADER_NAME}.${SUFFIX}.spv")
     
     add_custom_command(
         OUTPUT ${OUTPUT_FILE}
