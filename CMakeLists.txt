@@ -12,13 +12,12 @@ if(WEBVULKAN_WASM)
     if(NOT DEFINED EMSCRIPTEN)
         message(FATAL_ERROR "WEBVULKAN_WASM requires Emscripten toolchain")
     endif()
-    set(USE_WEBGPU ON)
-    add_compile_options(--use-port=emdawnwebgpu)
-    add_link_options(--use-port=emdawnwebgpu -sALLOW_MEMORY_GROWTH=1 --bind)
     set(CMAKE_EXECUTABLE_SUFFIX ".js")
+    add_compile_options(--use-port=emdawnwebgpu -sASYNCIFY=1)
+    add_link_options(--use-port=emdawnwebgpu -sALLOW_MEMORY_GROWTH=1 -sASYNCIFY=1 -sENVIRONMENT=web)
 endif()
 
-add_library(webvulkan SHARED
+add_library(webvulkan
     src/core/instance.c
     src/core/device.c
     src/core/physical_device.c
@@ -55,28 +54,12 @@ add_library(webvulkan SHARED
     src/util/hash_table.c
 )
 
-# Add WebGPU stubs for native builds (non-WASM)
-if(NOT WEBVULKAN_WASM)
-    target_sources(webvulkan PRIVATE src/stubs/webgpu_stubs.c)
-    target_compile_definitions(webvulkan PRIVATE WGPU_SHARED_LIBRARY)
-endif()
-
 target_include_directories(webvulkan
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_compile_definitions(webvulkan PRIVATE
-    VK_NO_PROTOTYPES
-    WEBVULKAN_IMPLEMENTATION
-)
-
-if(USE_WEBGPU)
-    target_compile_definitions(webvulkan PRIVATE WEBVULKAN_USE_WEBGPU)
-endif()
+target_compile_definitions(webvulkan PRIVATE VK_NO_PROTOTYPES WEBVULKAN_IMPLEMENTATION)
 
 if(WEBVULKAN_BUILD_SAMPLES)
     add_subdirectory(samples)
@@ -85,17 +68,3 @@ endif()
 if(WEBVULKAN_BUILD_TESTS AND NOT WEBVULKAN_WASM)
     add_subdirectory(tests)
 endif()
-
-install(TARGETS webvulkan
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-)
-
-install(DIRECTORY include/webvulkan
-    DESTINATION include
-)
-
-install(FILES include/vulkan.h
-    DESTINATION include
-)

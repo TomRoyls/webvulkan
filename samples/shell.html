@@ -3,38 +3,39 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WebVulkan Triangle</title>
+    <title>WebVulkan</title>
     <style>
         body { margin: 0; background: #1a1a2e; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: system-ui; color: #ccc; }
         canvas { border: 1px solid #4a4a6a; background: #0f0f1a; }
         #status { margin-bottom: 10px; }
-        #error { color: #ff6b6b; max-width: 80%; text-align: center; }
+        #error { color: #ff6b6b; max-width: 80%; }
     </style>
 </head>
 <body>
-    <div id="status">Loading WebGPU...</div>
+    <div id="status">Loading...</div>
     <canvas id="canvas" width="800" height="600"></canvas>
     <div id="error" style="display:none;"></div>
 
     <script>
+        async function initWebGPU() {
+            if (!navigator.gpu) {
+                throw new Error('WebGPU not supported');
+            }
+            const adapter = await navigator.gpu.requestAdapter();
+            if (!adapter) throw new Error('No GPU adapter');
+            const device = await adapter.requestDevice();
+            return { adapter, device };
+        }
+
         async function main() {
             const statusEl = document.getElementById('status');
             const errorEl = document.getElementById('error');
             const canvas = document.getElementById('canvas');
             
             try {
-                if (!navigator.gpu) {
-                    throw new Error('WebGPU not supported. Use Chrome 113+ or Edge 113+');
-                }
+                statusEl.textContent = 'Initializing WebGPU...';
+                const { adapter, device } = await initWebGPU();
                 
-                statusEl.textContent = 'Requesting GPU adapter...';
-                const adapter = await navigator.gpu.requestAdapter();
-                if (!adapter) throw new Error('No GPU adapter found');
-                
-                statusEl.textContent = 'Requesting GPU device...';
-                const device = await adapter.requestDevice();
-                
-                statusEl.textContent = 'Configuring canvas...';
                 const context = canvas.getContext('webgpu');
                 const format = navigator.gpu.getPreferredCanvasFormat();
                 context.configure({ device, format, alphaMode: 'opaque' });
@@ -46,20 +47,14 @@
                     canvas: canvas,
                     onRuntimeInitialized: () => {
                         statusEl.textContent = 'Running';
-                    },
-                    print: (text) => console.log('[C] ' + text),
-                    printErr: (text) => console.error('[C] ' + text),
+                    }
                 };
                 
                 const script = document.createElement('script');
                 script.src = 'triangle.js';
-                script.onerror = () => {
-                    throw new Error('Failed to load triangle.js');
-                };
                 document.body.appendChild(script);
                 
             } catch (e) {
-                console.error(e);
                 statusEl.style.display = 'none';
                 errorEl.style.display = 'block';
                 errorEl.textContent = 'Error: ' + e.message;

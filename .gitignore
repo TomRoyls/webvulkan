@@ -1,3 +1,6 @@
 build-native/
 build-wasm/
 build/
+.sisyphus/
+*.js
+*.wasm
