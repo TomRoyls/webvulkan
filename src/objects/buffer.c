@@ -45,7 +45,7 @@ VkResult vkCreateBuffer(
     WGPUBufferDescriptor desc = {
         .size = pCreateInfo->size,
         .usage = wgpu_usage,
-        .mappedAtCreation = false,
+        .mappedAtCreation = VK_FALSE,
     };
     
     buffer->wgpu_buffer = wgpuDeviceCreateBuffer(device->wgpu_device, &desc);

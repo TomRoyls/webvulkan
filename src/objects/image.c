@@ -93,9 +93,9 @@ VkResult vkCreateImage(
     
     wgvk_object_init(&image->base, destroy_image);
     image->device = device;
-    image->width = pCreateInfo->extent[0];
-    image->height = pCreateInfo->extent[1];
-    image->depth = pCreateInfo->extent[2];
+    image->width = pCreateInfo->extent.width;
+    image->height = pCreateInfo->extent.height;
+    image->depth = pCreateInfo->extent.depth;
     image->mip_levels = pCreateInfo->mipLevels;
     image->array_layers = pCreateInfo->arrayLayers;
     image->format = pCreateInfo->format;
@@ -118,9 +118,9 @@ VkResult vkCreateImage(
     if (pCreateInfo->usage & 0x00000020) wgpu_usage |= WGPUTextureUsage_RenderAttachment; /* depth/stencil */
     
     WGPUExtent3D size = {
-        .width = pCreateInfo->extent[0],
-        .height = pCreateInfo->extent[1] > 0 ? pCreateInfo->extent[1] : 1,
-        .depthOrArrayLayers = pCreateInfo->extent[2] > 0 ? pCreateInfo->extent[2] : pCreateInfo->arrayLayers,
+        .width = pCreateInfo->extent.width,
+        .height = pCreateInfo->extent.height > 0 ? pCreateInfo->extent.height : 1,
+        .depthOrArrayLayers = pCreateInfo->extent.depth > 0 ? pCreateInfo->extent.depth : pCreateInfo->arrayLayers,
     };
     
     WGPUTextureDescriptor desc = {
