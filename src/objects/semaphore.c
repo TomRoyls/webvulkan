@@ -26,7 +26,7 @@ VkResult vkCreateSemaphore(
     wgvk_object_init(&semaphore->base, destroy_semaphore);
     semaphore->device = device;
     semaphore->value = 0;
-    semaphore->signaled = false;
+    semaphore->signaled = VK_FALSE;
     
     *pSemaphore = semaphore;
     return VK_SUCCESS;

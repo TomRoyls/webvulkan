@@ -7,24 +7,15 @@ static void destroy_fence(void* obj) {
 
 VkResult vkCreateFence(
     VkDevice device,
-    const void* pCreateInfo,
+    const VkFenceCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
     VkFence* pFence) {
     
-    (void)pCreateInfo;
     (void)pAllocator;
     
     if (!device || !pFence) {
         return VK_ERROR_OUT_OF_HOST_MEMORY;
     }
-    
-    typedef struct VkFenceCreateInfo {
-        VkStructureType sType;
-        const void* pNext;
-        VkFlags flags;
-    } VkFenceCreateInfo;
-    
-    const VkFenceCreateInfo* create_info = (const VkFenceCreateInfo*)pCreateInfo;
     
     VkFence fence = wgvk_alloc(sizeof(struct VkFence_T));
     if (!fence) {
@@ -33,7 +24,7 @@ VkResult vkCreateFence(
     
     wgvk_object_init(&fence->base, destroy_fence);
     fence->device = device;
-    fence->signaled = (create_info && (create_info->flags & 0x00000001)); // VK_FENCE_CREATE_SIGNALED_BIT
+    fence->signaled = (pCreateInfo && (pCreateInfo->flags & 0x00000001)) ? VK_TRUE : VK_FALSE;
     
     *pFence = fence;
     return VK_SUCCESS;
@@ -65,7 +56,7 @@ VkResult vkResetFences(
     
     for (uint32_t i = 0; i < fenceCount; i++) {
         if (pFences[i]) {
-            pFences[i]->signaled = false;
+            pFences[i]->signaled = VK_FALSE;
         }
     }
     
@@ -102,15 +93,15 @@ VkResult vkWaitForFences(
     // WebGPU is async, so we simulate fence completion
     // In a real implementation, this would integrate with WebGPU's async model
     
-    bool all_signaled = true;
-    bool any_signaled = false;
+    VkBool32 all_signaled = VK_TRUE;
+    VkBool32 any_signaled = VK_FALSE;
     
     for (uint32_t i = 0; i < fenceCount; i++) {
         if (pFences[i]) {
             if (pFences[i]->signaled) {
-                any_signaled = true;
+                any_signaled = VK_TRUE;
             } else {
-                all_signaled = false;
+                all_signaled = VK_FALSE;
             }
         }
     }
@@ -123,7 +114,7 @@ VkResult vkWaitForFences(
         // For now, signal all fences to simulate completion
         for (uint32_t i = 0; i < fenceCount; i++) {
             if (pFences[i]) {
-                pFences[i]->signaled = true;
+                pFences[i]->signaled = VK_TRUE;
             }
         }
         return VK_SUCCESS;
@@ -133,7 +124,7 @@ VkResult vkWaitForFences(
         }
         // Signal first fence as completed
         if (pFences[0]) {
-            pFences[0]->signaled = true;
+            pFences[0]->signaled = VK_TRUE;
         }
         return VK_SUCCESS;
     }

@@ -25,7 +25,7 @@ VkResult vkCreateEvent(
     
     wgvk_object_init(&event->base, destroy_event);
     event->device = device;
-    event->signaled = false;
+    event->signaled = VK_FALSE;
     
     *pEvent = event;
     return VK_SUCCESS;
@@ -54,7 +54,7 @@ VkResult vkSetEvent(
         return VK_ERROR_OUT_OF_HOST_MEMORY;
     }
     
-    event->signaled = true;
+    event->signaled = VK_TRUE;
     return VK_SUCCESS;
 }
 
@@ -68,7 +68,7 @@ VkResult vkResetEvent(
         return VK_ERROR_OUT_OF_HOST_MEMORY;
     }
     
-    event->signaled = false;
+    event->signaled = VK_FALSE;
     return VK_SUCCESS;
 }
 
