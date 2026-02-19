@@ -14,6 +14,24 @@ static void destroy_pipeline(void* obj) {
     free(pipeline);
 }
 
+static WGPUVertexFormat vk_format_to_wgpu(uint32_t vk_format) {
+    switch (vk_format) {
+        case 37: return WGPUVertexFormat_Float32;
+        case 38: return WGPUVertexFormat_Float32x2;
+        case 39: return WGPUVertexFormat_Float32x3;
+        case 40: return WGPUVertexFormat_Float32x4;
+        case 41: return WGPUVertexFormat_Sint32;
+        case 42: return WGPUVertexFormat_Sint32x2;
+        case 43: return WGPUVertexFormat_Sint32x3;
+        case 44: return WGPUVertexFormat_Sint32x4;
+        case 45: return WGPUVertexFormat_Uint32;
+        case 46: return WGPUVertexFormat_Uint32x2;
+        case 47: return WGPUVertexFormat_Uint32x3;
+        case 48: return WGPUVertexFormat_Uint32x4;
+        default: return WGPUVertexFormat_Float32x3;
+    }
+}
+
 VkResult vkCreateGraphicsPipelines(
     VkDevice device,
     VkPipelineCache pipelineCache,
@@ -49,34 +67,121 @@ VkResult vkCreateGraphicsPipelines(
         WGPUVertexState vertex_state = {0};
         if (info->pStages && info->stageCount > 0) {
             for (uint32_t s = 0; s < info->stageCount; s++) {
-                if (info->pStages[s].stage == 0) {
+                if (info->pStages[s].stage == VK_SHADER_STAGE_VERTEX_BIT) {
                     vertex_state.module = info->pStages[s].module->wgpu_shader;
                     vertex_state.entryPoint = (WGPUStringView){ .data = info->pStages[s].pName, .length = WGPU_STRLEN };
                 }
             }
         }
         
+        WGPUVertexBufferLayout* buffer_layouts = NULL;
+        uint32_t buffer_count = 0;
+        WGPUVertexAttribute* attributes = NULL;
+        uint32_t attr_count = 0;
+        
+        if (info->pVertexInputState) {
+            const VkPipelineVertexInputStateCreateInfo* vi = info->pVertexInputState;
+            buffer_count = vi->vertexBindingDescriptionCount;
+            attr_count = vi->vertexAttributeDescriptionCount;
+            
+            if (buffer_count > 0) {
+                buffer_layouts = wgvk_alloc(buffer_count * sizeof(WGPUVertexBufferLayout));
+                for (uint32_t b = 0; b < buffer_count; b++) {
+                    const VkVertexInputBindingDescription* binding = &vi->pVertexBindingDescriptions[b];
+                    buffer_layouts[b].arrayStride = binding->stride;
+                    buffer_layouts[b].stepMode = binding->inputRate ? WGPUVertexStepMode_Instance : WGPUVertexStepMode_Vertex;
+                    
+                    uint32_t attrs_for_binding = 0;
+                    for (uint32_t a = 0; a < attr_count; a++) {
+                        if (vi->pVertexAttributeDescriptions[a].binding == binding->binding) {
+                            attrs_for_binding++;
+                        }
+                    }
+                    
+                    attributes = wgvk_alloc(attrs_for_binding * sizeof(WGPUVertexAttribute));
+                    uint32_t attr_idx = 0;
+                    for (uint32_t a = 0; a < attr_count; a++) {
+                        const VkVertexInputAttributeDescription* attr = &vi->pVertexAttributeDescriptions[a];
+                        if (attr->binding == binding->binding) {
+                            attributes[attr_idx].format = vk_format_to_wgpu(attr->format);
+                            attributes[attr_idx].offset = attr->offset;
+                            attributes[attr_idx].shaderLocation = attr->location;
+                            attr_idx++;
+                        }
+                    }
+                    buffer_layouts[b].attributeCount = attrs_for_binding;
+                    buffer_layouts[b].attributes = attributes;
+                }
+                vertex_state.bufferCount = buffer_count;
+                vertex_state.buffers = buffer_layouts;
+            }
+        }
+        
         WGPUFragmentState fragment_state = {0};
+        WGPUColorTargetState color_targets[8] = {0};
+        uint32_t color_target_count = 0;
+        
         if (info->pStages && info->stageCount > 1) {
             for (uint32_t s = 0; s < info->stageCount; s++) {
-                if (info->pStages[s].stage == 1) {
+                if (info->pStages[s].stage == VK_SHADER_STAGE_FRAGMENT_BIT) {
                     fragment_state.module = info->pStages[s].module->wgpu_shader;
                     fragment_state.entryPoint = (WGPUStringView){ .data = info->pStages[s].pName, .length = WGPU_STRLEN };
                 }
+            }
+            
+            if (info->pColorBlendState && info->pColorBlendState->attachmentCount > 0) {
+                for (uint32_t c = 0; c < info->pColorBlendState->attachmentCount && c < 8; c++) {
+                    color_targets[c].format = WGPUTextureFormat_BGRA8Unorm;
+                    color_targets[c].blend = NULL;
+                    color_targets[c].writeMask = WGPUColorWriteMask_All;
+                    color_target_count++;
+                }
+            } else {
+                color_targets[0].format = WGPUTextureFormat_BGRA8Unorm;
+                color_targets[0].blend = NULL;
+                color_targets[0].writeMask = WGPUColorWriteMask_All;
+                color_target_count = 1;
+            }
+            fragment_state.targetCount = color_target_count;
+            fragment_state.targets = color_targets;
+        }
+        
+        WGPUPrimitiveState primitive_state = {
+            .topology = WGPUPrimitiveTopology_TriangleList,
+            .stripIndexFormat = WGPUIndexFormat_Undefined,
+            .frontFace = WGPUFrontFace_CW,
+            .cullMode = WGPUCullMode_None,
+        };
+        
+        if (info->pInputAssemblyState) {
+            switch (info->pInputAssemblyState->topology) {
+                case 0: primitive_state.topology = WGPUPrimitiveTopology_PointList; break;
+                case 1: primitive_state.topology = WGPUPrimitiveTopology_LineList; break;
+                case 2: primitive_state.topology = WGPUPrimitiveTopology_LineStrip; break;
+                case 3: primitive_state.topology = WGPUPrimitiveTopology_TriangleList; break;
+                case 4: primitive_state.topology = WGPUPrimitiveTopology_TriangleStrip; break;
+                default: primitive_state.topology = WGPUPrimitiveTopology_TriangleList; break;
             }
         }
         
         WGPURenderPipelineDescriptor desc = {
             .layout = info->layout ? info->layout->wgpu_layout : NULL,
             .vertex = vertex_state,
-            .fragment = &fragment_state,
-            .primitive = {
-                .topology = WGPUPrimitiveTopology_TriangleList,
-                .cullMode = WGPUCullMode_None,
+            .fragment = color_target_count > 0 ? &fragment_state : NULL,
+            .primitive = primitive_state,
+            .depthStencil = NULL,
+            .multisample = {
+                .count = 1,
+                .mask = 0xFFFFFFFF,
+                .alphaToCoverageEnabled = VK_FALSE,
             },
         };
         
         pipeline->wgpu_pipeline.render = wgpuDeviceCreateRenderPipeline(device->wgpu_device, &desc);
+        
+        if (buffer_layouts) wgvk_free(buffer_layouts);
+        if (attributes) wgvk_free(attributes);
+        
         if (!pipeline->wgpu_pipeline.render) {
             free(pipeline);
             for (uint32_t j = 0; j < i; j++) {
@@ -156,4 +261,8 @@ void vkDestroyPipeline(
     if (pipeline) {
         wgvk_object_release(&pipeline->base);
     }
+}
+
+WGPURenderPipeline wgvk_pipeline_get_render(VkPipeline pipeline) {
+    return pipeline ? pipeline->wgpu_pipeline.render : NULL;
 }

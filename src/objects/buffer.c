@@ -69,3 +69,7 @@ void vkDestroyBuffer(
         wgvk_object_release(&buffer->base);
     }
 }
+
+WGPUBuffer wgvk_buffer_get_wgpu(VkBuffer buffer) {
+    return buffer ? buffer->wgpu_buffer : NULL;
+}
