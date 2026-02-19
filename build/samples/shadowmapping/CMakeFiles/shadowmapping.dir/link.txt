@@ -1,1 +1,0 @@
-/usr/bin/cc -Wl,--dependency-file=CMakeFiles/shadowmapping.dir/link.d CMakeFiles/shadowmapping.dir/main.c.o -o shadowmapping  -Wl,-rpath,/home/georg/code/webvulkan/build ../../libwebvulkan.so

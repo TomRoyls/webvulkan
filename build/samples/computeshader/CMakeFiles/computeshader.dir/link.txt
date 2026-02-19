@@ -1,1 +1,0 @@
-/usr/bin/cc -Wl,--dependency-file=CMakeFiles/computeshader.dir/link.d CMakeFiles/computeshader.dir/main.c.o -o computeshader  -Wl,-rpath,/home/georg/code/webvulkan/build ../../libwebvulkan.so

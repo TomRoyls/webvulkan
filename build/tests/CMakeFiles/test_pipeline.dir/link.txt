@@ -1,1 +1,0 @@
-/usr/bin/cc -Wl,--dependency-file=CMakeFiles/test_pipeline.dir/link.d CMakeFiles/test_pipeline.dir/test_pipeline.c.o -o test_pipeline  -Wl,-rpath,/home/georg/code/webvulkan/build ../libwebvulkan.so
