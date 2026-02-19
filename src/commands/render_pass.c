@@ -1,16 +1,5 @@
 #include "webvulkan_internal.h"
 
-typedef struct {
-    float x, y;
-    float width, height;
-    float minDepth, maxDepth;
-} VkViewport;
-
-typedef struct {
-    int32_t x, y;
-    uint32_t width, height;
-} VkRect2D;
-
 void vkCmdBeginRenderPass(
     VkCommandBuffer commandBuffer,
     const void* pRenderPassBegin,
@@ -32,13 +21,13 @@ void vkCmdBeginRenderPass(
         const void* pClearValues;
     } const* begin_info = pRenderPassBegin;
     
-    commandBuffer->in_render_pass = true;
+    commandBuffer->in_render_pass = VK_TRUE;
     
     WGPURenderPassColorAttachment color_attachments[WGVK_MAX_COLOR_ATTACHMENTS] = {0};
     uint32_t color_count = 0;
     
     WGPURenderPassDepthStencilAttachment depth_attachment = {0};
-    bool has_depth = false;
+    VkBool32 has_depth = VK_FALSE;
     
     if (begin_info->framebuffer) {
         VkFramebuffer fb = begin_info->framebuffer;
@@ -89,7 +78,7 @@ void vkCmdEndRenderPass(
         commandBuffer->wgpu_render_pass = NULL;
     }
     
-    commandBuffer->in_render_pass = false;
+    commandBuffer->in_render_pass = VK_FALSE;
 }
 
 void vkCmdNextSubpass(
@@ -139,10 +128,10 @@ void vkCmdSetScissor(
     for (uint32_t i = 0; i < scissorCount; i++) {
         wgpuRenderPassEncoderSetScissorRect(
             commandBuffer->wgpu_render_pass,
-            scissors[i].x,
-            scissors[i].y,
-            scissors[i].width,
-            scissors[i].height);
+            scissors[i].offset.x,
+            scissors[i].offset.y,
+            scissors[i].extent.width,
+            scissors[i].extent.height);
     }
 }
 

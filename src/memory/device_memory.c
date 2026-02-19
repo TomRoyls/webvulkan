@@ -45,7 +45,7 @@ VkResult vkAllocateMemory(
         .usage = WGPUBufferUsage_CopySrc | WGPUBufferUsage_CopyDst | 
                  WGPUBufferUsage_Uniform | WGPUBufferUsage_Storage |
                  WGPUBufferUsage_Vertex | WGPUBufferUsage_Index,
-        .mappedAtCreation = false,
+        .mappedAtCreation = VK_FALSE,
     };
     
     mem->wgpu_buffer = wgpuDeviceCreateBuffer(device->wgpu_device, &desc);

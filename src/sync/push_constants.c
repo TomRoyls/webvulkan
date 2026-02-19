@@ -9,7 +9,7 @@ void wgvk_push_constants_init(VkDevice device) {
     desc.label = (WGPUStringView){ .data = "PushConstants", .length = WGPU_STRLEN };
     desc.usage = WGPUBufferUsage_Uniform | WGPUBufferUsage_CopyDst;
     desc.size = WGVK_PUSH_CONSTANT_SIZE * 1024;
-    desc.mappedAtCreation = false;
+    desc.mappedAtCreation = VK_FALSE;
     
     device->push_constant_buffer = wgpuDeviceCreateBuffer(device->wgpu_device, &desc);
 }
