@@ -44,7 +44,7 @@ VkResult vkQueueSubmit(
     }
     
     if (fence) {
-        fence->signaled = true;
+        fence->signaled = VK_TRUE;
     }
     
     return VK_SUCCESS;

@@ -1,30 +1,23 @@
 #include "webvulkan_internal.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 static void destroy_device(void* obj) {
     VkDevice device = (VkDevice)obj;
+#ifndef __EMSCRIPTEN__
     if (device->wgpu_device) {
         wgpuDeviceRelease(device->wgpu_device);
     }
+#endif
     if (device->wgpu_queue) {
         wgpuQueueRelease(device->wgpu_queue);
     }
-    free(device);
-}
-
-typedef struct {
-    VkDevice device;
-    bool completed;
-    WGPUDevice wgpu_device;
-} DeviceRequestContext;
-
-static void on_device_request_done(WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message, void* userdata1, void* userdata2) {
-    (void)message;
-    (void)userdata2;
-    DeviceRequestContext* ctx = (DeviceRequestContext*)userdata1;
-    if (status == WGPURequestDeviceStatus_Success) {
-        ctx->wgpu_device = device;
+    if (device->push_constant_buffer) {
+        wgpuBufferRelease(device->push_constant_buffer);
     }
-    ctx->completed = true;
+    free(device);
 }
 
 VkResult vkCreateDevice(
@@ -52,32 +45,29 @@ VkResult vkCreateDevice(
     device->queue_family_index = 0;
     device->push_constant_buffer = NULL;
     
-    DeviceRequestContext ctx = { .device = device, .completed = false, .wgpu_device = NULL };
-    
-    WGPUDeviceDescriptor desc = WGPU_DEVICE_DESCRIPTOR_INIT;
-    
-    WGPURequestDeviceCallbackInfo callbackInfo = {
-        .nextInChain = NULL,
-        .mode = WGPUCallbackMode_AllowProcessEvents,
-        .callback = on_device_request_done,
-        .userdata1 = &ctx,
-        .userdata2 = NULL,
-    };
-    
-    if (physicalDevice->wgpu_adapter) {
-        wgpuAdapterRequestDevice(physicalDevice->wgpu_adapter, &desc, callbackInfo);
-    }
-    
-    if (!ctx.completed || !ctx.wgpu_device) {
+#ifdef __EMSCRIPTEN__
+    device->wgpu_device = emscripten_webgpu_get_device();
+    if (!device->wgpu_device) {
         free(device);
         return VK_ERROR_INITIALIZATION_FAILED;
     }
+#else
+    if (physicalDevice->wgpu_adapter) {
+        WGPUDeviceDescriptor desc = WGPU_DEVICE_DESCRIPTOR_INIT;
+        device->wgpu_device = wgpuAdapterRequestDeviceSync(physicalDevice->wgpu_adapter, &desc);
+    }
+    if (!device->wgpu_device) {
+        free(device);
+        return VK_ERROR_INITIALIZATION_FAILED;
+    }
+#endif
     
-    device->wgpu_device = ctx.wgpu_device;
     device->wgpu_queue = wgpuDeviceGetQueue(device->wgpu_device);
     
     if (!device->wgpu_queue) {
+#ifndef __EMSCRIPTEN__
         wgpuDeviceRelease(device->wgpu_device);
+#endif
         free(device);
         return VK_ERROR_INITIALIZATION_FAILED;
     }
@@ -120,4 +110,11 @@ void vkGetDeviceQueue(
     queue->queue_index = queueIndex;
     
     *pQueue = queue;
+}
+
+VkResult vkDeviceWaitIdle(VkDevice device) {
+    if (device && device->wgpu_device) {
+        (void)device->wgpu_device;
+    }
+    return VK_SUCCESS;
 }
