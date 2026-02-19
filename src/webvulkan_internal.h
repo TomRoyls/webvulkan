@@ -1,7 +1,9 @@
 #ifndef WEBVULKAN_INTERNAL_H
 #define WEBVULKAN_INTERNAL_H
 
+#define VK_NO_PROTOTYPES
 #include "vulkan_platform.h"
+#include <vulkan/vulkan_core.h>
 #include <webgpu/webgpu.h>
 #include <stdlib.h>
 #include <string.h>
