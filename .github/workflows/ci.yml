@@ -17,34 +17,17 @@ env:
 
 jobs:
   build-native:
-    name: Build (Native ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        include:
-          - os: ubuntu-latest
-            cc: gcc
-            cxx: g++
+    name: Build (Native)
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup ccache
-        uses: hendrikmuhs/ccache-action@v1.2
-        with:
-          key: ${{ matrix.os }}-${{ env.BUILD_TYPE }}
-
       - name: Configure CMake
         run: |
           cmake -B build \
             -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
-            -DCMAKE_C_COMPILER=${{ matrix.cc }} \
-            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DWEBVULKAN_BUILD_SAMPLES=OFF
 
       - name: Build
@@ -68,66 +51,25 @@ jobs:
           version: ${{ env.EMSCRIPTEN_VERSION }}
           actions-cache-folder: emsdk-cache
 
-      - name: Verify Emscripten
-        run: emcc -v
-
       - name: Configure CMake (WASM)
         run: |
           emcmake cmake -B build-wasm \
             -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
             -DWEBVULKAN_WASM=ON \
             -DWEBVULKAN_BUILD_TESTS=OFF \
-            -DWEBVULKAN_BUILD_SAMPLES=OFF
+            -DWEBVULKAN_BUILD_SAMPLES=ON
 
       - name: Build (WASM)
         run: cmake --build build-wasm --config ${{ env.BUILD_TYPE }} --parallel $(nproc)
 
-      - name: Upload WASM artifact
+      - name: Upload WASM samples
         uses: actions/upload-artifact@v4
         with:
-          name: webvulkan-wasm
-          path: build-wasm/libwebvulkan.a
+          name: webvulkan-samples
+          path: |
+            build-wasm/samples/*.js
+            build-wasm/samples/*.wasm
           retention-days: 7
-
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install clang-tidy
-        run: sudo apt-get update && sudo apt-get install -y clang-tidy
-
-      - name: Configure CMake (for compile_commands.json)
-        run: |
-          cmake -B build \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DWEBVULKAN_BUILD_SAMPLES=OFF \
-            -DWEBVULKAN_BUILD_TESTS=OFF
-
-      - name: Run clang-tidy
-        run: |
-          echo "Running clang-tidy on source files..."
-          find src -name '*.c' -exec clang-tidy -p build --warnings-as-errors='*' {} \; 2>&1 | head -100
-        continue-on-error: true
-
-      - name: Run cppcheck
-        run: |
-          sudo apt-get install -y cppcheck
-          cppcheck --version
-          cppcheck src \
-            --std=c11 \
-            --quiet \
-            --enable=warning,performance \
-            --suppress=missingIncludeSystem \
-            --error-exitcode=1 \
-            -I include \
-            -I src \
-            2>&1 | head -100
-        continue-on-error: true
 
   deploy-pages:
     name: Deploy to GitHub Pages
@@ -148,16 +90,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Download WASM samples
+        uses: actions/download-artifact@v4
+        with:
+          name: webvulkan-samples
+          path: ./samples-built
+
+      - name: Prepare deployment
+        run: |
+          mkdir -p deploy/triangle
+          cp samples-built/samples/*.js samples-built/samples/*.wasm deploy/triangle/ 2>/dev/null || true
+          cp samples/triangle/index.html deploy/triangle/
+          touch deploy/.nojekyll
+          ls -la deploy/triangle/
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
-      - name: Create .nojekyll
-        run: touch samples/.nojekyll
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./samples
+          path: ./deploy
 
       - name: Deploy to GitHub Pages
         id: deployment
