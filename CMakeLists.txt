@@ -8,13 +8,15 @@ option(WEBVULKAN_BUILD_SAMPLES "Build sample applications" ON)
 option(WEBVULKAN_BUILD_TESTS "Build tests" ON)
 option(WEBVULKAN_WASM "Build for WebAssembly" OFF)
 
+set(VULKAN_HEADERS_DIR ${CMAKE_SOURCE_DIR}/external/Vulkan-Headers/include)
+
 if(WEBVULKAN_WASM)
     if(NOT DEFINED EMSCRIPTEN)
         message(FATAL_ERROR "WEBVULKAN_WASM requires Emscripten toolchain")
     endif()
     set(CMAKE_EXECUTABLE_SUFFIX ".js")
-    add_compile_options(--use-port=emdawnwebgpu -sASYNCIFY=1)
-    add_link_options(--use-port=emdawnwebgpu -sALLOW_MEMORY_GROWTH=1 -sASYNCIFY=1 -sENVIRONMENT=web)
+    add_compile_options(--use-port=emdawnwebgpu)
+    add_link_options(--use-port=emdawnwebgpu -sALLOW_MEMORY_GROWTH=1 -sENVIRONMENT=web)
 endif()
 
 add_library(webvulkan
@@ -38,6 +40,7 @@ add_library(webvulkan
     src/objects/semaphore.c
     src/objects/fence.c
     src/objects/event.c
+
     src/commands/draw.c
     src/commands/compute.c
     src/commands/copy.c
@@ -55,11 +58,16 @@ add_library(webvulkan
 )
 
 target_include_directories(webvulkan
-    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PUBLIC
+        ${VULKAN_HEADERS_DIR}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_compile_definitions(webvulkan PRIVATE VK_NO_PROTOTYPES WEBVULKAN_IMPLEMENTATION)
+target_compile_definitions(webvulkan PRIVATE
+    VK_NO_PROTOTYPES
+    VK_USE_PLATFORM_EMSCRIPTEN
+)
 
 if(WEBVULKAN_BUILD_SAMPLES)
     add_subdirectory(samples)

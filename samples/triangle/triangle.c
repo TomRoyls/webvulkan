@@ -1,199 +1,166 @@
-#include <webgpu/webgpu.h>
+#include <webvulkan.h>
+
+#ifdef __EMSCRIPTEN__
 #include <emscripten.h>
-#include <emscripten/html5.h>
+#include <webgpu/webgpu.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-static WGPUDevice device = NULL;
-static WGPUSurface surface = NULL;
-static WGPUTextureFormat surface_format;
-static WGPURenderPipeline pipeline = NULL;
-static WGPUQueue queue = NULL;
+#define CANVAS_WIDTH 800
+#define CANVAS_HEIGHT 600
 
-static const char* vertex_shader_wgsl =
-    "@vertex fn main(@builtin(vertex_index) idx: u32) -> @builtin(position) vec4f {\n"
-    "    var pos = array<vec2f, 3>(vec2f(0.0, -0.7), vec2f(-0.7, 0.7), vec2f(0.7, 0.7));\n"
-    "    return vec4f(pos[idx], 0.0, 1.0);\n"
-    "}\n";
+static VkInstance g_instance = VK_NULL_HANDLE;
+static VkPhysicalDevice g_physical_device = VK_NULL_HANDLE;
+static VkDevice g_device = VK_NULL_HANDLE;
+static VkQueue g_queue = VK_NULL_HANDLE;
+static VkCommandPool g_command_pool = VK_NULL_HANDLE;
+static VkCommandBuffer g_command_buffer = VK_NULL_HANDLE;
+static VkBuffer g_vertex_buffer = VK_NULL_HANDLE;
+static VkDeviceMemory g_vertex_memory = VK_NULL_HANDLE;
 
-static const char* fragment_shader_wgsl =
-    "@fragment fn main(@builtin(position) pos: vec4f) -> @location(0) vec4f {\n"
-    "    return vec4f(1.0, 0.5, 0.0, 1.0);\n"
-    "}\n";
+#ifdef __EMSCRIPTEN__
+static WGPUSurface g_surface = NULL;
+static WGPUTextureFormat g_surface_format;
+#endif
 
-static WGPUShaderModule create_shader(WGPUDevice dev, const char* wgsl) {
-    WGPUShaderSourceWGSL wgsl_desc = {
-        .chain = {
-            .next = NULL,
-            .sType = WGPUSType_ShaderSourceWGSL,
-        },
-        .code = (WGPUStringView){ .data = wgsl, .length = WGPU_STRLEN },
+static const float g_vertices[] = {
+     0.0f, -0.7f, 0.0f,
+    -0.7f,  0.7f, 0.0f,
+     0.7f,  0.7f, 0.0f,
+};
+
+static VkResult init_vulkan(void) {
+    printf("[webvulkan] Creating Vulkan instance...\n");
+    
+    VkApplicationInfo app_info = {
+        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        .pApplicationName = "Triangle",
+        .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
+        .pEngineName = "WebVulkan",
+        .engineVersion = VK_MAKE_VERSION(1, 0, 0),
+        .apiVersion = VK_API_VERSION_1_0,
     };
     
-    WGPUShaderModuleDescriptor desc = {
-        .nextInChain = (const WGPUChainedStruct*)&wgsl_desc,
-        .label = (WGPUStringView){ .data = NULL, .length = WGPU_STRLEN },
+    VkInstanceCreateInfo instance_info = {
+        .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+        .pApplicationInfo = &app_info,
     };
     
-    return wgpuDeviceCreateShaderModule(dev, &desc);
-}
-
-static void init_pipeline(void) {
-    WGPUShaderModule vs = create_shader(device, vertex_shader_wgsl);
-    WGPUShaderModule fs = create_shader(device, fragment_shader_wgsl);
+    VkResult result = vkCreateInstance(&instance_info, NULL, &g_instance);
+    if (result != VK_SUCCESS) {
+        printf("[webvulkan] vkCreateInstance failed: %d\n", result);
+        return result;
+    }
+    printf("[webvulkan] Instance created\n");
     
-    WGPUBlendState blend = {
-        .color = {
-            .operation = WGPUBlendOperation_Add,
-            .srcFactor = WGPUBlendFactor_One,
-            .dstFactor = WGPUBlendFactor_Zero,
-        },
-        .alpha = {
-            .operation = WGPUBlendOperation_Add,
-            .srcFactor = WGPUBlendFactor_One,
-            .dstFactor = WGPUBlendFactor_Zero,
-        },
+    uint32_t device_count = 1;
+    result = vkEnumeratePhysicalDevices(g_instance, &device_count, &g_physical_device);
+    if (result != VK_SUCCESS || device_count == 0) {
+        printf("[webvulkan] No physical devices\n");
+        return VK_ERROR_INITIALIZATION_FAILED;
+    }
+    printf("[webvulkan] Physical device selected\n");
+    
+    float queue_priority = 1.0f;
+    VkDeviceQueueCreateInfo queue_info = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+        .queueFamilyIndex = 0,
+        .queueCount = 1,
+        .pQueuePriorities = &queue_priority,
     };
     
-    WGPUColorTargetState color_target = {
-        .format = surface_format,
-        .blend = &blend,
-        .writeMask = WGPUColorWriteMask_All,
+    VkDeviceCreateInfo device_info = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+        .queueCreateInfoCount = 1,
+        .pQueueCreateInfos = &queue_info,
     };
     
-    WGPUFragmentState fragment = {
-        .module = fs,
-        .entryPoint = (WGPUStringView){ .data = "main", .length = WGPU_STRLEN },
-        .constantCount = 0,
-        .constants = NULL,
-        .targetCount = 1,
-        .targets = &color_target,
+    printf("[webvulkan] Creating device...\n");
+    result = vkCreateDevice(g_physical_device, &device_info, NULL, &g_device);
+    if (result != VK_SUCCESS) {
+        printf("[webvulkan] vkCreateDevice failed: %d\n", result);
+        return result;
+    }
+    printf("[webvulkan] Device created\n");
+    
+    vkGetDeviceQueue(g_device, 0, 0, &g_queue);
+    printf("[webvulkan] Queue acquired\n");
+    
+    VkCommandPoolCreateInfo pool_info = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+        .queueFamilyIndex = 0,
     };
     
-    WGPURenderPipelineDescriptor desc = {
-        .label = (WGPUStringView){ .data = "TrianglePipeline", .length = WGPU_STRLEN },
-        .layout = NULL,
-        .vertex = {
-            .module = vs,
-            .entryPoint = (WGPUStringView){ .data = "main", .length = WGPU_STRLEN },
-            .constantCount = 0,
-            .constants = NULL,
-            .bufferCount = 0,
-            .buffers = NULL,
-        },
-        .primitive = {
-            .topology = WGPUPrimitiveTopology_TriangleList,
-            .stripIndexFormat = WGPUIndexFormat_Undefined,
-            .frontFace = WGPUFrontFace_CCW,
-            .cullMode = WGPUCullMode_None,
-            .unclippedDepth = false,
-        },
-        .fragment = &fragment,
-        .depthStencil = NULL,
-        .multisample = {
-            .count = 1,
-            .mask = 0xFFFFFFFF,
-            .alphaToCoverageEnabled = false,
-        },
+    result = vkCreateCommandPool(g_device, &pool_info, NULL, &g_command_pool);
+    if (result != VK_SUCCESS) {
+        printf("[webvulkan] vkCreateCommandPool failed: %d\n", result);
+        return result;
+    }
+    printf("[webvulkan] Command pool created\n");
+    
+    VkCommandBufferAllocateInfo cmd_info = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = g_command_pool,
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        .commandBufferCount = 1,
     };
     
-    pipeline = wgpuDeviceCreateRenderPipeline(device, &desc);
+    result = vkAllocateCommandBuffers(g_device, &cmd_info, &g_command_buffer);
+    if (result != VK_SUCCESS) {
+        printf("[webvulkan] vkAllocateCommandBuffers failed: %d\n", result);
+        return result;
+    }
+    printf("[webvulkan] Command buffer allocated\n");
     
-    wgpuShaderModuleRelease(vs);
-    wgpuShaderModuleRelease(fs);
-}
-
-static void frame(void* arg) {
-    (void)arg;
+    VkBufferCreateInfo buffer_info = {
+        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        .size = sizeof(g_vertices),
+        .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+    };
     
-    WGPUSurfaceTexture surface_texture;
-    wgpuSurfaceGetCurrentTexture(surface, &surface_texture);
+    result = vkCreateBuffer(g_device, &buffer_info, NULL, &g_vertex_buffer);
+    if (result != VK_SUCCESS) {
+        printf("[webvulkan] vkCreateBuffer failed: %d\n", result);
+        return result;
+    }
+    printf("[webvulkan] Vertex buffer created (%zu bytes)\n", sizeof(g_vertices));
     
-    if (surface_texture.status != WGPUSurfaceGetCurrentTextureStatus_SuccessOptimal &&
-        surface_texture.status != WGPUSurfaceGetCurrentTextureStatus_SuccessSuboptimal) {
-        printf("Surface texture error: %d\n", surface_texture.status);
-        return;
+    VkMemoryRequirements mem_reqs;
+    vkGetBufferMemoryRequirements(g_device, g_vertex_buffer, &mem_reqs);
+    
+    VkMemoryAllocateInfo alloc_info = {
+        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        .allocationSize = mem_reqs.size,
+        .memoryTypeIndex = 0,
+    };
+    
+    result = vkAllocateMemory(g_device, &alloc_info, NULL, &g_vertex_memory);
+    if (result != VK_SUCCESS) {
+        printf("[webvulkan] vkAllocateMemory failed: %d\n", result);
+        return result;
     }
     
-    WGPUTextureViewDescriptor view_desc = {
-        .label = (WGPUStringView){ .data = NULL, .length = WGPU_STRLEN },
-        .format = surface_format,
-        .dimension = WGPUTextureViewDimension_2D,
-        .aspect = WGPUTextureAspect_All,
-        .baseMipLevel = 0,
-        .mipLevelCount = 1,
-        .baseArrayLayer = 0,
-        .arrayLayerCount = 1,
-    };
-    
-    WGPUTextureView backbuffer = wgpuTextureCreateView(surface_texture.texture, &view_desc);
-    
-    WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(device, NULL);
-    
-    WGPURenderPassColorAttachment color_attachment = {
-        .view = backbuffer,
-        .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
-        .resolveTarget = NULL,
-        .loadOp = WGPULoadOp_Clear,
-        .storeOp = WGPUStoreOp_Store,
-        .clearValue = {0.05, 0.05, 0.1, 1.0},
-    };
-    
-    WGPURenderPassDescriptor render_pass = {
-        .label = (WGPUStringView){ .data = NULL, .length = WGPU_STRLEN },
-        .colorAttachmentCount = 1,
-        .colorAttachments = &color_attachment,
-        .depthStencilAttachment = NULL,
-        .occlusionQuerySet = NULL,
-        .timestampWrites = NULL,
-    };
-    
-    WGPURenderPassEncoder pass = wgpuCommandEncoderBeginRenderPass(encoder, &render_pass);
-    
-    wgpuRenderPassEncoderSetPipeline(pass, pipeline);
-    wgpuRenderPassEncoderDraw(pass, 3, 1, 0, 0);
-    wgpuRenderPassEncoderEnd(pass);
-    wgpuRenderPassEncoderRelease(pass);
-    
-    WGPUCommandBuffer cmd = wgpuCommandEncoderFinish(encoder, NULL);
-    wgpuCommandEncoderRelease(encoder);
-    
-    wgpuQueueSubmit(queue, 1, &cmd);
-    wgpuCommandBufferRelease(cmd);
-    
-    wgpuSurfacePresent(surface);
-    wgpuTextureViewRelease(backbuffer);
-    wgpuTextureRelease(surface_texture.texture);
-}
-
-static void configure_surface(int width, int height) {
-    WGPUSurfaceConfiguration config = {
-        .nextInChain = NULL,
-        .device = device,
-        .format = surface_format,
-        .usage = WGPUTextureUsage_RenderAttachment,
-        .width = width,
-        .height = height,
-        .presentMode = WGPUPresentMode_Fifo,
-        .alphaMode = WGPUCompositeAlphaMode_Auto,
-        .viewFormatCount = 0,
-        .viewFormats = NULL,
-    };
-    wgpuSurfaceConfigure(surface, &config);
-}
-
-int main(void) {
-    printf("WebVulkan Triangle - WebGPU Backend\n");
-    
-    device = emscripten_webgpu_get_device();
-    if (!device) {
-        printf("ERROR: Failed to get WebGPU device\n");
-        return 1;
+    void* mapped = NULL;
+    result = vkMapMemory(g_device, g_vertex_memory, 0, sizeof(g_vertices), 0, &mapped);
+    if (result == VK_SUCCESS && mapped) {
+        memcpy(mapped, g_vertices, sizeof(g_vertices));
+        vkUnmapMemory(g_device, g_vertex_memory);
     }
-    printf("Got WebGPU device\n");
     
-    queue = wgpuDeviceGetQueue(device);
+    vkBindBufferMemory(g_device, g_vertex_buffer, g_vertex_memory, 0);
+    printf("[webvulkan] Vertex memory bound\n");
     
+    printf("[webvulkan] Vulkan initialization complete\n");
+    return VK_SUCCESS;
+}
+
+#ifdef __EMSCRIPTEN__
+
+static void init_webgpu_surface(void) {
     WGPUInstance instance = wgpuCreateInstance(NULL);
     
     WGPUEmscriptenSurfaceSourceCanvasHTMLSelector canvas_selector = {
@@ -206,31 +173,127 @@ int main(void) {
     
     WGPUSurfaceDescriptor surface_desc = {
         .nextInChain = (const WGPUChainedStruct*)&canvas_selector,
-        .label = (WGPUStringView){ .data = NULL, .length = WGPU_STRLEN },
     };
     
-    surface = wgpuInstanceCreateSurface(instance, &surface_desc);
-    printf("Created surface\n");
+    g_surface = wgpuInstanceCreateSurface(instance, &surface_desc);
     
     WGPUSurfaceCapabilities caps;
-    wgpuSurfaceGetCapabilities(surface, NULL, &caps);
-    surface_format = caps.formats[0];
+    wgpuSurfaceGetCapabilities(g_surface, NULL, &caps);
+    g_surface_format = caps.formats[0];
     for (uint32_t i = 0; i < caps.formatCount; i++) {
         if (caps.formats[i] == WGPUTextureFormat_BGRA8Unorm ||
             caps.formats[i] == WGPUTextureFormat_RGBA8Unorm) {
-            surface_format = caps.formats[i];
+            g_surface_format = caps.formats[i];
             break;
         }
     }
     wgpuSurfaceCapabilitiesFreeMembers(caps);
-    printf("Surface format: %d\n", surface_format);
     
-    configure_surface(800, 600);
+    WGPUSurfaceConfiguration config = {
+        .device = emscripten_webgpu_get_device(),
+        .format = g_surface_format,
+        .usage = WGPUTextureUsage_RenderAttachment,
+        .width = CANVAS_WIDTH,
+        .height = CANVAS_HEIGHT,
+        .presentMode = WGPUPresentMode_Fifo,
+        .alphaMode = WGPUCompositeAlphaMode_Auto,
+    };
+    wgpuSurfaceConfigure(g_surface, &config);
     
-    init_pipeline();
-    printf("Pipeline created\n");
+    printf("[webvulkan] Surface configured, format=%d\n", g_surface_format);
+}
+
+static void render_frame(void) {
+    WGPUSurfaceTexture surface_texture;
+    wgpuSurfaceGetCurrentTexture(g_surface, &surface_texture);
     
-    emscripten_set_main_loop_arg(frame, NULL, 0, 1);
+    if (surface_texture.status != WGPUSurfaceGetCurrentTextureStatus_SuccessOptimal &&
+        surface_texture.status != WGPUSurfaceGetCurrentTextureStatus_SuccessSuboptimal) {
+        return;
+    }
+    
+    WGPUTextureViewDescriptor view_desc = {
+        .format = g_surface_format,
+        .dimension = WGPUTextureViewDimension_2D,
+        .aspect = WGPUTextureAspect_All,
+        .baseMipLevel = 0,
+        .mipLevelCount = 1,
+        .baseArrayLayer = 0,
+        .arrayLayerCount = 1,
+    };
+    
+    WGPUTextureView backbuffer = wgpuTextureCreateView(surface_texture.texture, &view_desc);
+    
+    WGPUDevice device = emscripten_webgpu_get_device();
+    WGPUQueue queue = wgpuDeviceGetQueue(device);
+    WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(device, NULL);
+    
+    WGPURenderPassColorAttachment color_attachment = {
+        .view = backbuffer,
+        .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
+        .loadOp = WGPULoadOp_Clear,
+        .storeOp = WGPUStoreOp_Store,
+        .clearValue = {0.05, 0.05, 0.1, 1.0},
+    };
+    
+    WGPURenderPassDescriptor render_pass = {
+        .colorAttachmentCount = 1,
+        .colorAttachments = &color_attachment,
+    };
+    
+    WGPURenderPassEncoder pass = wgpuCommandEncoderBeginRenderPass(encoder, &render_pass);
+    wgpuRenderPassEncoderEnd(pass);
+    wgpuRenderPassEncoderRelease(pass);
+    
+    WGPUCommandBuffer cmd = wgpuCommandEncoderFinish(encoder, NULL);
+    wgpuCommandEncoderRelease(encoder);
+    
+    wgpuQueueSubmit(queue, 1, &cmd);
+    wgpuCommandBufferRelease(cmd);
+    
+    wgpuSurfacePresent(g_surface);
+    wgpuTextureViewRelease(backbuffer);
+    wgpuTextureRelease(surface_texture.texture);
+}
+
+#endif
+
+static void cleanup(void) {
+    if (g_device) {
+        vkDeviceWaitIdle(g_device);
+        if (g_vertex_buffer) vkDestroyBuffer(g_device, g_vertex_buffer, NULL);
+        if (g_vertex_memory) vkFreeMemory(g_device, g_vertex_memory, NULL);
+        if (g_command_pool) vkDestroyCommandPool(g_device, g_command_pool, NULL);
+        vkDestroyDevice(g_device, NULL);
+    }
+    if (g_instance) {
+        vkDestroyInstance(g_instance, NULL);
+    }
+}
+
+int main(void) {
+    printf("========================================\n");
+    printf("WebVulkan Triangle Demo\n");
+    printf("Vulkan API -> webvulkan -> WebGPU\n");
+    printf("========================================\n\n");
+    
+    VkResult result = init_vulkan();
+    if (result != VK_SUCCESS) {
+        printf("[webvulkan] Initialization failed: %d\n", result);
+        cleanup();
+        return 1;
+    }
+    
+#ifdef __EMSCRIPTEN__
+    printf("[webvulkan] Initializing WebGPU surface...\n");
+    init_webgpu_surface();
+    
+    printf("[webvulkan] Starting render loop\n");
+    emscripten_set_main_loop(render_frame, 0, 1);
+#else
+    printf("[webvulkan] Vulkan initialized successfully (native build)\n");
+    cleanup();
+#endif
     
     return 0;
 }
