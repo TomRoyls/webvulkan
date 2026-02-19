@@ -1,21 +1,5 @@
 #include "webvulkan_internal.h"
 
-typedef struct VkDescriptorSetLayoutBinding {
-    uint32_t binding;
-    uint32_t descriptorType;
-    uint32_t descriptorCount;
-    uint32_t stageFlags;
-    const void* pImmutableSamplers;
-} VkDescriptorSetLayoutBinding;
-
-typedef struct VkDescriptorSetLayoutCreateInfo {
-    VkStructureType sType;
-    const void* pNext;
-    VkFlags flags;
-    uint32_t bindingCount;
-    const VkDescriptorSetLayoutBinding* pBindings;
-} VkDescriptorSetLayoutCreateInfo;
-
 static void destroy_descriptor_set_layout(void* obj) {
     VkDescriptorSetLayout layout = (VkDescriptorSetLayout)obj;
     
@@ -94,22 +78,22 @@ VkResult vkCreateDescriptorSetLayout(
                 break;
             case 6: // VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
                 entry->buffer.type = WGPUBufferBindingType_Uniform;
-                entry->buffer.hasDynamicOffset = false;
+                entry->buffer.hasDynamicOffset = VK_FALSE;
                 entry_count++;
                 break;
             case 7: // VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
                 entry->buffer.type = WGPUBufferBindingType_Storage;
-                entry->buffer.hasDynamicOffset = false;
+                entry->buffer.hasDynamicOffset = VK_FALSE;
                 entry_count++;
                 break;
             case 8: // VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
                 entry->buffer.type = WGPUBufferBindingType_Uniform;
-                entry->buffer.hasDynamicOffset = true;
+                entry->buffer.hasDynamicOffset = VK_TRUE;
                 entry_count++;
                 break;
             case 9: // VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
                 entry->buffer.type = WGPUBufferBindingType_Storage;
-                entry->buffer.hasDynamicOffset = true;
+                entry->buffer.hasDynamicOffset = VK_TRUE;
                 entry_count++;
                 break;
             default:

@@ -33,9 +33,9 @@ VkResult vkAllocateCommandBuffers(
         cmd->wgpu_render_pass = NULL;
         cmd->wgpu_compute_pass = NULL;
         cmd->level = pAllocateInfo->level;
-        cmd->recording = false;
-        cmd->in_render_pass = false;
-        cmd->in_compute_pass = false;
+        cmd->recording = VK_FALSE;
+        cmd->in_render_pass = VK_FALSE;
+        cmd->in_compute_pass = VK_FALSE;
         cmd->bound_pipeline = NULL;
         cmd->bound_layout = NULL;
         cmd->bound_index_buffer = NULL;
@@ -94,9 +94,9 @@ VkResult vkBeginCommandBuffer(
         return VK_ERROR_OUT_OF_DEVICE_MEMORY;
     }
     
-    commandBuffer->recording = true;
-    commandBuffer->in_render_pass = false;
-    commandBuffer->in_compute_pass = false;
+    commandBuffer->recording = VK_TRUE;
+    commandBuffer->in_render_pass = VK_FALSE;
+    commandBuffer->in_compute_pass = VK_FALSE;
     
     return VK_SUCCESS;
 }
@@ -112,16 +112,16 @@ VkResult vkEndCommandBuffer(
         wgpuRenderPassEncoderEnd(commandBuffer->wgpu_render_pass);
         wgpuRenderPassEncoderRelease(commandBuffer->wgpu_render_pass);
         commandBuffer->wgpu_render_pass = NULL;
-        commandBuffer->in_render_pass = false;
+        commandBuffer->in_render_pass = VK_FALSE;
     }
     
     if (commandBuffer->in_compute_pass) {
         wgpuComputePassEncoderEnd(commandBuffer->wgpu_compute_pass);
         wgpuComputePassEncoderRelease(commandBuffer->wgpu_compute_pass);
         commandBuffer->wgpu_compute_pass = NULL;
-        commandBuffer->in_compute_pass = false;
+        commandBuffer->in_compute_pass = VK_FALSE;
     }
     
-    commandBuffer->recording = false;
+    commandBuffer->recording = VK_FALSE;
     return VK_SUCCESS;
 }
