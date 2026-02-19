@@ -1,7 +1,7 @@
 #ifndef WEBVULKAN_INTERNAL_H
 #define WEBVULKAN_INTERNAL_H
 
-#include "../include/vulkan.h"
+#include "vulkan_platform.h"
 #include <webgpu/webgpu.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,6 +67,15 @@ struct VkQueue_T {
     uint32_t queue_index;
 };
 
+struct VkDeviceMemory_T {
+    struct WgvkObject base;
+    VkDevice device;
+    VkDeviceSize size;
+    uint32_t memory_type_index;
+    void* mapped_ptr;
+    WGPUBuffer wgpu_buffer;
+};
+
 struct VkBuffer_T {
     struct WgvkObject base;
     VkDevice device;
@@ -129,7 +138,7 @@ struct VkPipeline_T {
         WGPURenderPipeline render;
         WGPUComputePipeline compute;
     } wgpu_pipeline;
-    uint32_t bind_point;
+    VkPipelineBindPoint bind_point;
 };
 
 struct VkRenderPass_T {
@@ -165,10 +174,10 @@ struct VkCommandBuffer_T {
     WGPUCommandEncoder wgpu_encoder;
     WGPURenderPassEncoder wgpu_render_pass;
     WGPUComputePassEncoder wgpu_compute_pass;
-    uint32_t level;
-    bool recording;
-    bool in_render_pass;
-    bool in_compute_pass;
+    VkCommandBufferLevel level;
+    VkBool32 recording;
+    VkBool32 in_render_pass;
+    VkBool32 in_compute_pass;
     uint32_t push_constant_offset;
     
     VkPipeline bound_pipeline;
@@ -177,38 +186,27 @@ struct VkCommandBuffer_T {
     VkDeviceSize bound_vertex_offsets[WGVK_MAX_VERTEX_BUFFERS];
     VkBuffer bound_index_buffer;
     VkDeviceSize bound_index_offset;
-    uint32_t bound_index_type;
+    VkIndexType bound_index_type;
     VkDescriptorSet bound_descriptor_sets[WGVK_MAX_BIND_GROUPS];
-    uint32_t viewport_count;
-    uint32_t scissor_count;
 };
 
 struct VkSemaphore_T {
     struct WgvkObject base;
     VkDevice device;
     uint64_t value;
-    bool signaled;
+    VkBool32 signaled;
 };
 
 struct VkFence_T {
     struct WgvkObject base;
     VkDevice device;
-    bool signaled;
+    VkBool32 signaled;
 };
 
 struct VkEvent_T {
     struct WgvkObject base;
     VkDevice device;
-    bool signaled;
-};
-
-struct VkDeviceMemory_T {
-    struct WgvkObject base;
-    VkDevice device;
-    VkDeviceSize size;
-    uint32_t memory_type_index;
-    void* mapped_ptr;
-    WGPUBuffer wgpu_buffer;
+    VkBool32 signaled;
 };
 
 struct VkDescriptorSetLayout_T {
