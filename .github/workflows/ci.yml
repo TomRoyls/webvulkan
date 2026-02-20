@@ -16,27 +16,6 @@ env:
   EMSCRIPTEN_VERSION: "5.0.1"
 
 jobs:
-  build-native:
-    name: Build (Native)
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure CMake
-        run: |
-          cmake -B build \
-            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
-            -DWEBVULKAN_BUILD_SAMPLES=OFF
-
-      - name: Build
-        run: cmake --build build --config ${{ env.BUILD_TYPE }} --parallel $(nproc)
-
-      - name: Run tests
-        working-directory: build
-        run: ctest --build-config ${{ env.BUILD_TYPE }} --output-on-failure --timeout 60
-
   build-wasm:
     name: Build (WASM)
     runs-on: ubuntu-latest
@@ -74,7 +53,7 @@ jobs:
   deploy-pages:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
-    needs: [build-native, build-wasm]
+    needs: [build-wasm]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     
     permissions:

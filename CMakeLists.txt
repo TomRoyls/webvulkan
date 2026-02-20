@@ -8,7 +8,16 @@ option(WEBVULKAN_BUILD_SAMPLES "Build sample applications" ON)
 option(WEBVULKAN_BUILD_TESTS "Build tests" ON)
 option(WEBVULKAN_WASM "Build for WebAssembly" OFF)
 
-set(VULKAN_HEADERS_DIR ${CMAKE_SOURCE_DIR}/external/Vulkan-Headers/include)
+include(FetchContent)
+FetchContent_Declare(
+    vulkan_headers
+    GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
+    GIT_TAG v1.4.304
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(vulkan_headers)
+
+set(VULKAN_HEADERS_DIR ${vulkan_headers_SOURCE_DIR}/include)
 
 if(WEBVULKAN_WASM)
     if(NOT DEFINED EMSCRIPTEN)

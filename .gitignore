@@ -1,8 +1,10 @@
 build-native/
 build-wasm/
 build_wasm/
+build_test/
 build/
 .sisyphus/
 *.js
 *.wasm
 triangle_error.png
+triangle_page.png
