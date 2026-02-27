@@ -12,7 +12,7 @@ void vkCmdBindPipeline(
     commandBuffer->bound_pipeline = pipeline;
     commandBuffer->bound_layout = pipeline->layout;
     
-    if (pipelineBindPoint == 0) {
+    if (pipelineBindPoint == VK_PIPELINE_BIND_POINT_GRAPHICS) {
         if (commandBuffer->wgpu_render_pass) {
             wgpuRenderPassEncoderSetPipeline(
                 commandBuffer->wgpu_render_pass,
@@ -110,7 +110,7 @@ void vkCmdBindDescriptorSets(
         if (slot < WGVK_MAX_BIND_GROUPS) {
             commandBuffer->bound_descriptor_sets[slot] = pDescriptorSets[i];
             
-            if (pipelineBindPoint == 0 && commandBuffer->wgpu_render_pass) {
+            if (pipelineBindPoint == VK_PIPELINE_BIND_POINT_GRAPHICS && commandBuffer->wgpu_render_pass) {
                 if (pDescriptorSets[i] && pDescriptorSets[i]->wgpu_bind_group) {
                     wgpuRenderPassEncoderSetBindGroup(
                         commandBuffer->wgpu_render_pass,
@@ -119,7 +119,7 @@ void vkCmdBindDescriptorSets(
                         0,
                         NULL);
                 }
-            } else if (pipelineBindPoint == 1 && commandBuffer->wgpu_compute_pass) {
+            } else if (pipelineBindPoint == VK_PIPELINE_BIND_POINT_COMPUTE && commandBuffer->wgpu_compute_pass) {
                 if (pDescriptorSets[i] && pDescriptorSets[i]->wgpu_bind_group) {
                     wgpuComputePassEncoderSetBindGroup(
                         commandBuffer->wgpu_compute_pass,
@@ -180,7 +180,7 @@ void vkCmdDrawIndirect(
     uint32_t drawCount,
     uint32_t stride)
 {
-    (void)stride;
+
     
     if (!commandBuffer || !buffer || !commandBuffer->wgpu_render_pass) {
         return;
@@ -201,7 +201,7 @@ void vkCmdDrawIndexedIndirect(
     uint32_t drawCount,
     uint32_t stride)
 {
-    (void)stride;
+
     
     if (!commandBuffer || !buffer || !commandBuffer->wgpu_render_pass) {
         return;

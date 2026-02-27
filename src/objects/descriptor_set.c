@@ -80,16 +80,7 @@ VkResult vkAllocateDescriptorSets(
         set->device = device;
         set->layout = alloc_info->pSetLayouts[i];
         set->wgpu_bind_group = NULL;
-        
-        if (set->layout && set->layout->wgpu_layout) {
-            WGPUBindGroupDescriptor desc = {
-                .layout = set->layout->wgpu_layout,
-                .entryCount = 0,
-                .entries = NULL,
-            };
-            
-            set->wgpu_bind_group = wgpuDeviceCreateBindGroup(device->wgpu_device, &desc);
-        }
+        set->entry_count = 0;
         
         pDescriptorSets[i] = set;
     }
@@ -122,7 +113,6 @@ void vkUpdateDescriptorSets(
     uint32_t descriptorCopyCount,
     const void* pDescriptorCopies)
 {
-    (void)device;
     (void)descriptorCopyCount;
     (void)pDescriptorCopies;
     
@@ -138,18 +128,75 @@ void vkUpdateDescriptorSets(
         uint32_t dstArrayElement;
         uint32_t descriptorCount;
         uint32_t descriptorType;
-        union {
-            const void* pBufferInfo;
-            const void* pImageInfo;
-            const void* pTexelBufferView;
-        };
+        const void* pImageInfo;
+        const void* pBufferInfo;
+        const void* pTexelBufferView;
     }* writes = pDescriptorWrites;
+    
+    const struct VkDescriptorBufferInfo_T {
+        VkBuffer buffer;
+        VkDeviceSize offset;
+        VkDeviceSize range;
+    }* buf_info;
+    
+    const struct VkDescriptorImageInfo_T {
+        VkSampler sampler;
+        VkImageView imageView;
+        uint32_t imageLayout;
+    }* img_info;
     
     for (uint32_t i = 0; i < descriptorWriteCount; i++) {
         VkDescriptorSet set = writes[i].dstSet;
-        if (!set) continue;
+        if (!set || !set->layout) continue;
         
-        (void)writes[i].descriptorType;
-        (void)writes[i].descriptorCount;
+        uint32_t binding = writes[i].dstBinding;
+        uint32_t desc_type = writes[i].descriptorType;
+        
+        for (uint32_t d = 0; d < writes[i].descriptorCount; d++) {
+            if (set->entry_count >= 32) break;
+            
+            WGPUBindGroupEntry* entry = &set->entries[set->entry_count];
+            memset(entry, 0, sizeof(*entry));
+            entry->binding = binding + d;
+            
+            if (desc_type == 6 || desc_type == 7 ||
+                desc_type == 8 || desc_type == 9) {
+                buf_info = (const struct VkDescriptorBufferInfo_T*)writes[i].pBufferInfo + d;
+                if (buf_info && buf_info->buffer && buf_info->buffer->wgpu_buffer) {
+                    entry->buffer = buf_info->buffer->wgpu_buffer;
+                    entry->offset = buf_info->offset;
+                    entry->size   = (buf_info->range == (VkDeviceSize)-1)
+                                    ? buf_info->buffer->size - buf_info->offset
+                                    : buf_info->range;
+                    set->entry_count++;
+                }
+            } else if (desc_type == 0) {
+                img_info = (const struct VkDescriptorImageInfo_T*)writes[i].pImageInfo + d;
+                if (img_info && img_info->sampler && img_info->sampler->wgpu_sampler) {
+                    entry->sampler = img_info->sampler->wgpu_sampler;
+                    set->entry_count++;
+                }
+            } else if (desc_type == 1 || desc_type == 2) {
+                img_info = (const struct VkDescriptorImageInfo_T*)writes[i].pImageInfo + d;
+                if (img_info && img_info->imageView && img_info->imageView->wgpu_view) {
+                    entry->textureView = img_info->imageView->wgpu_view;
+                    set->entry_count++;
+                }
+            }
+        }
+        
+        if (set->wgpu_bind_group) {
+            wgpuBindGroupRelease(set->wgpu_bind_group);
+            set->wgpu_bind_group = NULL;
+        }
+        
+        if (set->layout->wgpu_layout) {
+            WGPUBindGroupDescriptor desc = {
+                .layout     = set->layout->wgpu_layout,
+                .entryCount = set->entry_count,
+                .entries    = set->entries,
+            };
+            set->wgpu_bind_group = wgpuDeviceCreateBindGroup(device->wgpu_device, &desc);
+        }
     }
 }

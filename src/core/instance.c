@@ -1,8 +1,21 @@
 #include "webvulkan_internal.h"
 #include <stdio.h>
 
+static void destroy_physical_device(void* obj) {
+    VkPhysicalDevice phys_dev = (VkPhysicalDevice)obj;
+#ifndef __EMSCRIPTEN__
+    if (phys_dev->wgpu_adapter) {
+        wgpuAdapterRelease(phys_dev->wgpu_adapter);
+    }
+#endif
+    free(phys_dev);
+}
+
 static void destroy_instance(void* obj) {
     VkInstance instance = (VkInstance)obj;
+    if (instance->phys_dev) {
+        wgvk_object_release(&instance->phys_dev->base);
+    }
     if (instance->wgpu_instance) {
         wgpuInstanceRelease(instance->wgpu_instance);
     }
@@ -32,6 +45,7 @@ VkResult vkCreateInstance(
     instance->api_version = VK_API_VERSION_1_4;
     instance->application_name = NULL;
     instance->engine_name = NULL;
+    instance->phys_dev = NULL;
     
     if (pCreateInfo->pApplicationInfo) {
         const VkApplicationInfo* app_info = pCreateInfo->pApplicationInfo;
@@ -84,17 +98,23 @@ VkResult vkEnumeratePhysicalDevices(
         return VK_INCOMPLETE;
     }
     
-    VkPhysicalDevice phys_dev = wgvk_alloc(sizeof(struct VkPhysicalDevice_T));
-    if (!phys_dev) {
-        return VK_ERROR_OUT_OF_HOST_MEMORY;
+    /* Return the cached physical device if already created.  Repeated calls
+     * to vkEnumeratePhysicalDevices MUST return the same handle. */
+    if (!instance->phys_dev) {
+        VkPhysicalDevice phys_dev = wgvk_alloc(sizeof(struct VkPhysicalDevice_T));
+        if (!phys_dev) {
+            return VK_ERROR_OUT_OF_HOST_MEMORY;
+        }
+        wgvk_object_init(&phys_dev->base, destroy_physical_device);
+        phys_dev->instance = instance;
+        phys_dev->wgpu_adapter = NULL;
+        phys_dev->api_version = instance->api_version;
+        instance->phys_dev = phys_dev;
     }
     
-    wgvk_object_init(&phys_dev->base, NULL);
-    phys_dev->instance = instance;
-    phys_dev->wgpu_adapter = NULL;
-    phys_dev->api_version = instance->api_version;
-    
-    pPhysicalDevices[0] = phys_dev;
+    /* Retain so the caller's copy keeps the object alive independently. */
+    wgvk_object_retain(&instance->phys_dev->base);
+    pPhysicalDevices[0] = instance->phys_dev;
     *pPhysicalDeviceCount = 1;
     
     return VK_SUCCESS;

@@ -42,6 +42,7 @@ struct VkInstance_T {
     uint32_t api_version;
     char* application_name;
     char* engine_name;
+    struct VkPhysicalDevice_T* phys_dev; /* cached; freed with instance */
 };
 
 struct VkPhysicalDevice_T {
@@ -228,6 +229,8 @@ struct VkDescriptorSet_T {
     VkDevice device;
     VkDescriptorSetLayout layout;
     WGPUBindGroup wgpu_bind_group;
+    WGPUBindGroupEntry entries[32];
+    uint32_t entry_count;
 };
 
 struct VkSampler_T {

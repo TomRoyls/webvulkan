@@ -83,7 +83,7 @@ VkResult vkBeginCommandBuffer(
     }
     
     if (commandBuffer->recording) {
-        return VK_ERROR_INITIALIZATION_FAILED;
+        return VK_NOT_READY;
     }
     
     WGPUCommandEncoderDescriptor desc = {};

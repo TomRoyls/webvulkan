@@ -61,7 +61,7 @@ add_library(webvulkan
     src/sync/barrier.c
     src/sync/push_constants.c
     src/memory/device_memory.c
-    src/memory/allocator.c
+
     src/util/list.c
     src/util/hash_table.c
 )

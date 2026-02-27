@@ -31,25 +31,25 @@ void vkGetPhysicalDeviceProperties(
 
 void vkGetPhysicalDeviceFeatures(
     VkPhysicalDevice physicalDevice,
-    void* pFeatures)
+    VkPhysicalDeviceFeatures* pFeatures)
 {
     if (!physicalDevice || !pFeatures) {
         return;
     }
     
-    uint32_t* features = pFeatures;
-    memset(features, 0, 57 * sizeof(uint32_t));
-    
-    features[0] = 1;
-    features[1] = 1;
-    features[2] = 1;
-    features[3] = 1;
-    features[4] = 1;
-    features[5] = 1;
-    features[6] = 1;
-    features[7] = 1;
-    features[8] = 1;
-    features[9] = 1;
+    memset(pFeatures, 0, sizeof(VkPhysicalDeviceFeatures));
+    pFeatures->robustBufferAccess                      = VK_TRUE;
+    pFeatures->fullDrawIndexUint32                     = VK_TRUE;
+    pFeatures->imageCubeArray                          = VK_TRUE;
+    pFeatures->independentBlend                        = VK_TRUE;
+    pFeatures->sampleRateShading                       = VK_TRUE;
+    pFeatures->multiDrawIndirect                       = VK_TRUE;
+    pFeatures->drawIndirectFirstInstance               = VK_TRUE;
+    pFeatures->depthClamp                              = VK_TRUE;
+    pFeatures->depthBiasClamp                          = VK_TRUE;
+    pFeatures->samplerAnisotropy                       = VK_TRUE;
+    pFeatures->shaderUniformBufferArrayDynamicIndexing = VK_TRUE;
+    pFeatures->shaderSampledImageArrayDynamicIndexing  = VK_TRUE;
 }
 
 void vkGetPhysicalDeviceMemoryProperties(

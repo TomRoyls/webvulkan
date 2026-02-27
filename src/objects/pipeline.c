@@ -2,7 +2,7 @@
 
 static void destroy_pipeline(void* obj) {
     VkPipeline pipeline = (VkPipeline)obj;
-    if (pipeline->bind_point == 0) {
+    if (pipeline->bind_point == VK_PIPELINE_BIND_POINT_GRAPHICS) {
         if (pipeline->wgpu_pipeline.render) {
             wgpuRenderPipelineRelease(pipeline->wgpu_pipeline.render);
         }
@@ -16,19 +16,19 @@ static void destroy_pipeline(void* obj) {
 
 static WGPUVertexFormat vk_format_to_wgpu(uint32_t vk_format) {
     switch (vk_format) {
-        case 37: return WGPUVertexFormat_Float32;
-        case 38: return WGPUVertexFormat_Float32x2;
-        case 39: return WGPUVertexFormat_Float32x3;
-        case 40: return WGPUVertexFormat_Float32x4;
-        case 41: return WGPUVertexFormat_Sint32;
-        case 42: return WGPUVertexFormat_Sint32x2;
-        case 43: return WGPUVertexFormat_Sint32x3;
-        case 44: return WGPUVertexFormat_Sint32x4;
-        case 45: return WGPUVertexFormat_Uint32;
-        case 46: return WGPUVertexFormat_Uint32x2;
-        case 47: return WGPUVertexFormat_Uint32x3;
-        case 48: return WGPUVertexFormat_Uint32x4;
-        default: return WGPUVertexFormat_Float32x3;
+        case VK_FORMAT_R32_SFLOAT:         return WGPUVertexFormat_Float32;
+        case VK_FORMAT_R32G32_SFLOAT:      return WGPUVertexFormat_Float32x2;
+        case VK_FORMAT_R32G32B32_SFLOAT:   return WGPUVertexFormat_Float32x3;
+        case VK_FORMAT_R32G32B32A32_SFLOAT: return WGPUVertexFormat_Float32x4;
+        case VK_FORMAT_R32_SINT:           return WGPUVertexFormat_Sint32;
+        case VK_FORMAT_R32G32_SINT:        return WGPUVertexFormat_Sint32x2;
+        case VK_FORMAT_R32G32B32_SINT:     return WGPUVertexFormat_Sint32x3;
+        case VK_FORMAT_R32G32B32A32_SINT:  return WGPUVertexFormat_Sint32x4;
+        case VK_FORMAT_R32_UINT:           return WGPUVertexFormat_Uint32;
+        case VK_FORMAT_R32G32_UINT:        return WGPUVertexFormat_Uint32x2;
+        case VK_FORMAT_R32G32B32_UINT:     return WGPUVertexFormat_Uint32x3;
+        case VK_FORMAT_R32G32B32A32_UINT:  return WGPUVertexFormat_Uint32x4;
+        default:                           return WGPUVertexFormat_Float32x3;
     }
 }
 
@@ -61,7 +61,7 @@ VkResult vkCreateGraphicsPipelines(
         wgvk_object_init(&pipeline->base, destroy_pipeline);
         pipeline->device = device;
         pipeline->layout = info->layout;
-        pipeline->bind_point = 0;
+        pipeline->bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
         pipeline->wgpu_pipeline.render = NULL;
         
         WGPUVertexState vertex_state = {0};
@@ -76,7 +76,7 @@ VkResult vkCreateGraphicsPipelines(
         
         WGPUVertexBufferLayout* buffer_layouts = NULL;
         uint32_t buffer_count = 0;
-        WGPUVertexAttribute* attributes = NULL;
+        WGPUVertexAttribute* all_attributes = NULL;
         uint32_t attr_count = 0;
         
         if (info->pVertexInputState) {
@@ -86,31 +86,36 @@ VkResult vkCreateGraphicsPipelines(
             
             if (buffer_count > 0) {
                 buffer_layouts = wgvk_alloc(buffer_count * sizeof(WGPUVertexBufferLayout));
+                if (attr_count > 0) {
+                    all_attributes = wgvk_alloc(attr_count * sizeof(WGPUVertexAttribute));
+                }
+                
                 for (uint32_t b = 0; b < buffer_count; b++) {
                     const VkVertexInputBindingDescription* binding = &vi->pVertexBindingDescriptions[b];
                     buffer_layouts[b].arrayStride = binding->stride;
                     buffer_layouts[b].stepMode = binding->inputRate ? WGPUVertexStepMode_Instance : WGPUVertexStepMode_Vertex;
                     
                     uint32_t attrs_for_binding = 0;
+                    uint32_t attr_base = 0;
                     for (uint32_t a = 0; a < attr_count; a++) {
                         if (vi->pVertexAttributeDescriptions[a].binding == binding->binding) {
                             attrs_for_binding++;
                         }
                     }
                     
-                    attributes = wgvk_alloc(attrs_for_binding * sizeof(WGPUVertexAttribute));
-                    uint32_t attr_idx = 0;
-                    for (uint32_t a = 0; a < attr_count; a++) {
-                        const VkVertexInputAttributeDescription* attr = &vi->pVertexAttributeDescriptions[a];
-                        if (attr->binding == binding->binding) {
-                            attributes[attr_idx].format = vk_format_to_wgpu(attr->format);
-                            attributes[attr_idx].offset = attr->offset;
-                            attributes[attr_idx].shaderLocation = attr->location;
-                            attr_idx++;
+                    if (all_attributes) {
+                        for (uint32_t a = 0; a < attr_count; a++) {
+                            const VkVertexInputAttributeDescription* attr = &vi->pVertexAttributeDescriptions[a];
+                            if (attr->binding == binding->binding) {
+                                all_attributes[attr_base].format = vk_format_to_wgpu(attr->format);
+                                all_attributes[attr_base].offset = attr->offset;
+                                all_attributes[attr_base].shaderLocation = attr->location;
+                                attr_base++;
+                            }
                         }
+                        buffer_layouts[b].attributeCount = attrs_for_binding;
+                        buffer_layouts[b].attributes = all_attributes + (attr_base - attrs_for_binding);
                     }
-                    buffer_layouts[b].attributeCount = attrs_for_binding;
-                    buffer_layouts[b].attributes = attributes;
                 }
                 vertex_state.bufferCount = buffer_count;
                 vertex_state.buffers = buffer_layouts;
@@ -180,7 +185,7 @@ VkResult vkCreateGraphicsPipelines(
         pipeline->wgpu_pipeline.render = wgpuDeviceCreateRenderPipeline(device->wgpu_device, &desc);
         
         if (buffer_layouts) wgvk_free(buffer_layouts);
-        if (attributes) wgvk_free(attributes);
+        if (all_attributes) wgvk_free(all_attributes);
         
         if (!pipeline->wgpu_pipeline.render) {
             free(pipeline);
@@ -225,7 +230,7 @@ VkResult vkCreateComputePipelines(
         wgvk_object_init(&pipeline->base, destroy_pipeline);
         pipeline->device = device;
         pipeline->layout = info->layout;
-        pipeline->bind_point = 1;
+        pipeline->bind_point = VK_PIPELINE_BIND_POINT_COMPUTE;
         pipeline->wgpu_pipeline.compute = NULL;
         
         WGPUComputePipelineDescriptor desc = {

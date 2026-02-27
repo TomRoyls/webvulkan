@@ -113,8 +113,10 @@ void vkGetDeviceQueue(
 }
 
 VkResult vkDeviceWaitIdle(VkDevice device) {
-    if (device && device->wgpu_device) {
-        (void)device->wgpu_device;
-    }
+    (void)device;
+    /* WebGPU does not expose a synchronous CPU-GPU fence.  Work submission is
+     * fully asynchronous; callers that need ordering must use semaphores or
+     * fences provided by the swap-chain / present layer.  Returning success
+     * here is the correct no-op for a WebGPU back-end. */
     return VK_SUCCESS;
 }

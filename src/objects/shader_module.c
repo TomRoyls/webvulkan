@@ -19,12 +19,8 @@ static void destroy_shader_module(void* obj) {
 }
 
 static VkBool32 is_wgsl_source(const uint32_t* code, size_t size) {
-    (void)size;
     if (size < 4) return VK_FALSE;
-    uint32_t spv_magic = 0x07230203;
-    if (code[0] == spv_magic) return VK_FALSE;
-    const char* str = (const char*)code;
-    return (str[0] == '@' || str[0] == '/' || str[0] == '\n' || str[0] == ' ') ? VK_TRUE : VK_FALSE;
+    return (code[0] == 0x07230203) ? VK_FALSE : VK_TRUE;
 }
 
 VkResult vkCreateShaderModule(
