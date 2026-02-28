@@ -208,6 +208,11 @@ struct VkEvent_T {
     VkBool32 signaled;
 };
 
+struct VkFence_T {
+    struct WgvkObject base;
+    VkDevice device;
+    VkBool32 signaled;
+};
 struct VkDescriptorSetLayout_T {
     struct WgvkObject base;
     VkDevice device;
