@@ -115,6 +115,7 @@ struct VkImageView_T {
 	uint32_t format;
 };
 
+#define WGVK_SHADER_STAGE_COUNT 6
 struct VkShaderModule_T {
 	struct WgvkObject base;
 	VkDevice device;
@@ -122,6 +123,7 @@ struct VkShaderModule_T {
 	char *wgsl_source;
 	uint32_t *spirv_code;
 	size_t spirv_size;
+	WGPUShaderModule stage_shaders[WGVK_SHADER_STAGE_COUNT];
 };
 
 struct VkPipelineLayout_T {

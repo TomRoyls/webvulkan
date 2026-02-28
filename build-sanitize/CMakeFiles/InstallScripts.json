@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/georg/code/webvulkan/build-sanitize/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build-sanitize/_deps/vulkan_headers-build/cmake_install.cmake",
+		"/home/georg/code/webvulkan/build-sanitize/tests/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

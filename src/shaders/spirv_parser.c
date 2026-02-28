@@ -124,7 +124,6 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 		case WGVK_SPV_OP_EXT_INST_IMPORT:
 		case WGVK_SPV_OP_MEMORY_MODEL:
 		case WGVK_SPV_OP_SOURCE:
-		case WGVK_SPV_OP_EXECUTION_MODE:
 		case WGVK_SPV_OP_NAME:
 		case WGVK_SPV_OP_MEMBER_NAME:
 		case WGVK_SPV_OP_DECORATION_GROUP:
@@ -132,6 +131,36 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 		case WGVK_SPV_OP_GROUP_MEMBER_DECORATE:
 			skip_instruction(module, word_count);
 			break;
+
+		case WGVK_SPV_OP_EXECUTION_MODE: {
+			/* OpExecutionMode: entry_point_id, mode, optional operands */
+			if (word_count >= 3) {
+				uint32_t ep_id = read_word(module);
+				uint32_t mode  = read_word(module);
+				/* Mode 17 = LocalSize (compute workgroup dimensions) */
+				if (mode == 17 && word_count >= 6) {
+					uint32_t sx = read_word(module);
+					uint32_t sy = read_word(module);
+					uint32_t sz = read_word(module);
+					for (uint32_t i = 0; i < module->entry_point_count; i++) {
+						if (module->entry_points[i].entry_point_id == ep_id) {
+							module->entry_points[i].local_size_x = sx;
+							module->entry_points[i].local_size_y = sy;
+							module->entry_points[i].local_size_z = sz;
+							break;
+						}
+					}
+				} else {
+					/* Skip remaining operands for other modes */
+					size_t consumed = module->cursor - inst_start;
+					if (consumed < word_count)
+						module->cursor += word_count - consumed;
+				}
+			} else {
+				skip_instruction(module, word_count);
+			}
+			break;
+		}
 
 		case WGVK_SPV_OP_ENTRY_POINT: {
 			if (module->entry_point_count < WGVK_MAX_ENTRY_POINTS) {

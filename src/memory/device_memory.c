@@ -5,83 +5,80 @@ static void destroy_device_memory(void *obj) {
 	if (mem->wgpu_buffer) {
 		wgpuBufferRelease(mem->wgpu_buffer);
 	}
-	free(mem);
+	wgvk_free(mem);
 }
 
 static uint32_t vk_format_bytes_per_pixel(uint32_t format) {
 	/* Covers the most common VkFormat values.  Unknown formats fall back to 4. */
 	switch (format) {
-	case 9:
-	case 10:
-	case 11:
-	case 12: /* R8_* */
+	case VK_FORMAT_R8_UNORM:
+	case VK_FORMAT_R8_SNORM:
+	case VK_FORMAT_R8_UINT:
+	case VK_FORMAT_R8_SINT:
 		return 1;
-	case 13:
-	case 14:
-	case 15:
-	case 16: /* R8G8_* */
+	case VK_FORMAT_R8G8_UNORM:
+	case VK_FORMAT_R8G8_SNORM:
+	case VK_FORMAT_R8G8_UINT:
+	case VK_FORMAT_R8G8_SINT:
 		return 2;
-	case 37:
-	case 38:
-	case 39:
-	case 40: /* R8G8B8_* */
+	case VK_FORMAT_R8G8B8_UNORM:
+	case VK_FORMAT_R8G8B8_SNORM:
+	case VK_FORMAT_R8G8B8_UINT:
+	case VK_FORMAT_R8G8B8_SINT:
 		return 3;
-	case 41:
-	case 42:
-	case 43:
-	case 44: /* R8G8B8A8_* */
-	case 50:
-	case 51:
-	case 52:
-	case 53: /* B8G8R8A8_* */
+	case VK_FORMAT_R8G8B8A8_UNORM:
+	case VK_FORMAT_R8G8B8A8_SNORM:
+	case VK_FORMAT_R8G8B8A8_UINT:
+	case VK_FORMAT_R8G8B8A8_SINT:
+	case VK_FORMAT_B8G8R8A8_UNORM:
+	case VK_FORMAT_B8G8R8A8_SNORM:
+	case VK_FORMAT_B8G8R8A8_UINT:
+	case VK_FORMAT_B8G8R8A8_SINT:
 		return 4;
-	case 70:
-	case 71:
-	case 72:
-	case 73: /* R16_* */
+	case VK_FORMAT_R16_UNORM:
+	case VK_FORMAT_R16_SNORM:
+	case VK_FORMAT_R16_UINT:
+	case VK_FORMAT_R16_SINT:
 		return 2;
-	case 77:
-	case 78:
-	case 79:
-	case 80: /* R16G16_* */
+	case VK_FORMAT_R16G16_UNORM:
+	case VK_FORMAT_R16G16_SNORM:
+	case VK_FORMAT_R16G16_UINT:
+	case VK_FORMAT_R16G16_SINT:
 		return 4;
-	case 83:
-	case 84:
-	case 85:
-	case 86: /* R16G16B16_* */
+	case VK_FORMAT_R16G16B16_UNORM:
+	case VK_FORMAT_R16G16B16_SNORM:
+	case VK_FORMAT_R16G16B16_UINT:
+	case VK_FORMAT_R16G16B16_SINT:
 		return 6;
-	case 87:
-	case 88:
-	case 89:
-	case 90: /* R16G16B16A16_* */
+	case VK_FORMAT_R16G16B16A16_UNORM:
+	case VK_FORMAT_R16G16B16A16_SNORM:
+	case VK_FORMAT_R16G16B16A16_UINT:
+	case VK_FORMAT_R16G16B16A16_SINT:
 		return 8;
-	case 98:
-	case 99:
-	case 100:
-	case 101: /* R32_{U,S}INT / R32_SFLOAT */
+	case VK_FORMAT_R32_UINT:
+	case VK_FORMAT_R32_SINT:
+	case VK_FORMAT_R32_SFLOAT:
 		return 4;
-	case 103:
-	case 104:
-	case 105: /* R32G32_* */
+	case VK_FORMAT_R32G32_UINT:
+	case VK_FORMAT_R32G32_SINT:
+	case VK_FORMAT_R32G32_SFLOAT:
 		return 8;
-	case 106:
-	case 107:
-	case 108: /* R32G32B32_* */
+	case VK_FORMAT_R32G32B32_UINT:
+	case VK_FORMAT_R32G32B32_SINT:
+	case VK_FORMAT_R32G32B32_SFLOAT:
 		return 12;
-	case 109:
-	case 110:
-	case 111:
-	case 112:
-	case 113: /* R32G32B32A32_* */
+	case VK_FORMAT_R32G32B32A32_UINT:
+	case VK_FORMAT_R32G32B32A32_SINT:
+	case VK_FORMAT_R32G32B32A32_SFLOAT:
 		return 16;
-	case 124: /* D16_UNORM */
+	case VK_FORMAT_D16_UNORM:
 		return 2;
-	case 125: /* X8_D24_UNORM_PACK32 */
-	case 126: /* D32_SFLOAT */
-	case 127: /* S8_UINT */
+	case VK_FORMAT_X8_D24_UNORM_PACK32:
+	case VK_FORMAT_D32_SFLOAT:
+	case VK_FORMAT_S8_UINT:
 		return 4;
-	case 129: /* D24_UNORM_S8_UINT */
-	case 130: /* D32_SFLOAT_S8_UINT */
+	case VK_FORMAT_D24_UNORM_S8_UINT:
+	case VK_FORMAT_D32_SFLOAT_S8_UINT:
 		return 5;
 	default:
 		return 4;
@@ -118,7 +115,7 @@ VkResult vkAllocateMemory(VkDevice device, const VkMemoryAllocateInfo *pAllocate
 	mem->wgpu_buffer = wgpuDeviceCreateBuffer(device->wgpu_device, &desc);
 
 	if (!mem->wgpu_buffer) {
-		free(mem);
+		wgvk_free(mem);
 		return VK_ERROR_OUT_OF_DEVICE_MEMORY;
 	}
 

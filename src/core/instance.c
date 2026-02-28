@@ -59,6 +59,8 @@ VkResult vkCreateInstance(const VkInstanceCreateInfo *pCreateInfo,
 	instance->wgpu_instance = wgpuCreateInstance(&desc);
 
 	if (!instance->wgpu_instance) {
+		wgvk_free(instance->application_name);
+		wgvk_free(instance->engine_name);
 		wgvk_free(instance);
 		return VK_ERROR_INITIALIZATION_FAILED;
 	}

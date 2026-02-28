@@ -324,8 +324,22 @@ static void emit_entry_function(WgvkWgslGenerator *gen) {
 		emit(gen, "@vertex\n");
 	} else if (exec_model == WGVK_SPV_EXEC_MODEL_FRAGMENT) {
 		emit(gen, "@fragment\n");
-	} else if (exec_model == WGVK_SPV_EXEC_MODEL_GL_COMPUTE) {
-		emit(gen, "@compute @workgroup_size(1)\n");
+} else if (exec_model == WGVK_SPV_EXEC_MODEL_GL_COMPUTE) {
+		/* Look up the LocalSize from OpExecutionMode so we emit the correct
+		 * @workgroup_size instead of always defaulting to (1, 1, 1). */
+		uint32_t lsx = 1, lsy = 1, lsz = 1;
+		for (uint32_t i = 0; i < mod->entry_point_count; i++) {
+			if (mod->entry_points[i].exec_model == exec_model) {
+				if (mod->entry_points[i].local_size_x > 0)
+					lsx = mod->entry_points[i].local_size_x;
+				if (mod->entry_points[i].local_size_y > 0)
+					lsy = mod->entry_points[i].local_size_y;
+				if (mod->entry_points[i].local_size_z > 0)
+					lsz = mod->entry_points[i].local_size_z;
+				break;
+			}
+		}
+		emit(gen, "@compute @workgroup_size(%u, %u, %u)\n", lsx, lsy, lsz);
 	}
 
 	const char *entry_name = wgvk_spirv_get_entry_name(mod, exec_model);

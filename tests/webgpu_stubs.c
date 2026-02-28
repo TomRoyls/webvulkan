@@ -4,7 +4,7 @@
 
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor *descriptor) {
 	(void)descriptor;
-	return NULL;
+	return (WGPUInstance)(uintptr_t)1;
 }
 void wgpuInstanceRelease(WGPUInstance instance) {
 	(void)instance;
@@ -15,14 +15,14 @@ void wgpuAdapterRelease(WGPUAdapter adapter) {
 WGPUDevice wgpuAdapterRequestDeviceSync(WGPUAdapter adapter, const WGPUDeviceDescriptor *descriptor) {
 	(void)adapter;
 	(void)descriptor;
-	return NULL;
+	return (WGPUDevice)(uintptr_t)1;
 }
 void wgpuDeviceRelease(WGPUDevice device) {
 	(void)device;
 }
 WGPUQueue wgpuDeviceGetQueue(WGPUDevice device) {
 	(void)device;
-	return NULL;
+	return (WGPUQueue)(uintptr_t)1;
 }
 void wgpuQueueRelease(WGPUQueue queue) {
 	(void)queue;
@@ -46,7 +46,7 @@ void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t offset, c
 WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, const WGPUBufferDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPUBuffer)(uintptr_t)1;
 }
 void wgpuBufferRelease(WGPUBuffer buffer) {
 	(void)buffer;
@@ -54,7 +54,7 @@ void wgpuBufferRelease(WGPUBuffer buffer) {
 WGPUTexture wgpuDeviceCreateTexture(WGPUDevice device, const WGPUTextureDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPUTexture)(uintptr_t)1;
 }
 void wgpuTextureRelease(WGPUTexture texture) {
 	(void)texture;
@@ -62,7 +62,7 @@ void wgpuTextureRelease(WGPUTexture texture) {
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor *descriptor) {
 	(void)texture;
 	(void)descriptor;
-	return NULL;
+	return (WGPUTextureView)(uintptr_t)1;
 }
 void wgpuTextureViewRelease(WGPUTextureView view) {
 	(void)view;
@@ -74,7 +74,7 @@ WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture) {
 WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice device, const WGPUShaderModuleDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPUShaderModule)(uintptr_t)1;
 }
 void wgpuShaderModuleRelease(WGPUShaderModule module) {
 	(void)module;
@@ -82,7 +82,7 @@ void wgpuShaderModuleRelease(WGPUShaderModule module) {
 WGPURenderPipeline wgpuDeviceCreateRenderPipeline(WGPUDevice device, const WGPURenderPipelineDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPURenderPipeline)(uintptr_t)1;
 }
 void wgpuRenderPipelineRelease(WGPURenderPipeline pipeline) {
 	(void)pipeline;
@@ -90,7 +90,7 @@ void wgpuRenderPipelineRelease(WGPURenderPipeline pipeline) {
 WGPUComputePipeline wgpuDeviceCreateComputePipeline(WGPUDevice device, const WGPUComputePipelineDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPUComputePipeline)(uintptr_t)1;
 }
 void wgpuComputePipelineRelease(WGPUComputePipeline pipeline) {
 	(void)pipeline;
@@ -98,7 +98,7 @@ void wgpuComputePipelineRelease(WGPUComputePipeline pipeline) {
 WGPUPipelineLayout wgpuDeviceCreatePipelineLayout(WGPUDevice device, const WGPUPipelineLayoutDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPUPipelineLayout)(uintptr_t)1;
 }
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout layout) {
 	(void)layout;
@@ -106,7 +106,7 @@ void wgpuPipelineLayoutRelease(WGPUPipelineLayout layout) {
 WGPUBindGroupLayout wgpuDeviceCreateBindGroupLayout(WGPUDevice device, const WGPUBindGroupLayoutDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPUBindGroupLayout)(uintptr_t)1;
 }
 void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout layout) {
 	(void)layout;
@@ -114,7 +114,7 @@ void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout layout) {
 WGPUBindGroup wgpuDeviceCreateBindGroup(WGPUDevice device, const WGPUBindGroupDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPUBindGroup)(uintptr_t)1;
 }
 void wgpuBindGroupRelease(WGPUBindGroup group) {
 	(void)group;
@@ -122,7 +122,7 @@ void wgpuBindGroupRelease(WGPUBindGroup group) {
 WGPUSampler wgpuDeviceCreateSampler(WGPUDevice device, const WGPUSamplerDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPUSampler)(uintptr_t)1;
 }
 void wgpuSamplerRelease(WGPUSampler sampler) {
 	(void)sampler;
@@ -130,7 +130,7 @@ void wgpuSamplerRelease(WGPUSampler sampler) {
 WGPUCommandEncoder wgpuDeviceCreateCommandEncoder(WGPUDevice device, const WGPUCommandEncoderDescriptor *descriptor) {
 	(void)device;
 	(void)descriptor;
-	return NULL;
+	return (WGPUCommandEncoder)(uintptr_t)1;
 }
 void wgpuCommandEncoderRelease(WGPUCommandEncoder encoder) {
 	(void)encoder;
@@ -138,7 +138,7 @@ void wgpuCommandEncoderRelease(WGPUCommandEncoder encoder) {
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder encoder, const WGPUCommandBufferDescriptor *descriptor) {
 	(void)encoder;
 	(void)descriptor;
-	return NULL;
+	return (WGPUCommandBuffer)(uintptr_t)1;
 }
 void wgpuCommandBufferRelease(WGPUCommandBuffer buffer) {
 	(void)buffer;
@@ -175,7 +175,7 @@ WGPURenderPassEncoder wgpuCommandEncoderBeginRenderPass(WGPUCommandEncoder encod
                                                         const WGPURenderPassDescriptor *descriptor) {
 	(void)encoder;
 	(void)descriptor;
-	return NULL;
+	return (WGPURenderPassEncoder)(uintptr_t)1;
 }
 void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder encoder) {
 	(void)encoder;
@@ -273,7 +273,7 @@ WGPUComputePassEncoder wgpuCommandEncoderBeginComputePass(WGPUCommandEncoder enc
                                                           const void *descriptor) {
 	(void)encoder;
 	(void)descriptor;
-	return NULL;
+	return (WGPUComputePassEncoder)(uintptr_t)1;
 }
 void wgpuComputePassEncoderEnd(WGPUComputePassEncoder encoder) {
 	(void)encoder;

@@ -1,0 +1,2 @@
+/usr/bin/llvm-ar qc libwebvulkan_native.a CMakeFiles/webvulkan_native.dir/src/shaders/spirv_parser.c.o CMakeFiles/webvulkan_native.dir/src/shaders/wgsl_gen.c.o CMakeFiles/webvulkan_native.dir/src/util/log.c.o
+/usr/bin/llvm-ranlib libwebvulkan_native.a

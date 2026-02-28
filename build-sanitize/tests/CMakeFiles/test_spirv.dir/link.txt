@@ -1,0 +1,1 @@
+/usr/bin/clang -g -fsanitize=address,undefined -Xlinker --dependency-file=CMakeFiles/test_spirv.dir/link.d CMakeFiles/test_spirv.dir/test_spirv.c.o -o test_spirv  ../libwebvulkan_native.a

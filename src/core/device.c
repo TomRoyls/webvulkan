@@ -17,7 +17,7 @@ static void destroy_device(void *obj) {
 	if (device->push_constant_buffer) {
 		wgpuBufferRelease(device->push_constant_buffer);
 	}
-	free(device);
+	wgvk_free(device);
 }
 
 VkResult vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo *pCreateInfo,
@@ -44,7 +44,7 @@ VkResult vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInf
 #ifdef __EMSCRIPTEN__
 	device->wgpu_device = emscripten_webgpu_get_device();
 	if (!device->wgpu_device) {
-		free(device);
+		wgvk_free(device);
 		return VK_ERROR_INITIALIZATION_FAILED;
 	}
 #else
@@ -53,7 +53,7 @@ VkResult vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInf
 		device->wgpu_device = wgpuAdapterRequestDeviceSync(physicalDevice->wgpu_adapter, &desc);
 	}
 	if (!device->wgpu_device) {
-		free(device);
+		wgvk_free(device);
 		return VK_ERROR_INITIALIZATION_FAILED;
 	}
 #endif
@@ -64,7 +64,7 @@ VkResult vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInf
 #ifndef __EMSCRIPTEN__
 		wgpuDeviceRelease(device->wgpu_device);
 #endif
-		free(device);
+		wgvk_free(device);
 		return VK_ERROR_INITIALIZATION_FAILED;
 	}
 
@@ -79,6 +79,14 @@ void vkDestroyDevice(VkDevice device, const VkAllocationCallbacks *pAllocator) {
 	}
 }
 
+static void destroy_queue(void *obj) {
+	VkQueue queue = (VkQueue)obj;
+	if (queue->wgpu_queue) {
+		wgpuQueueRelease(queue->wgpu_queue);
+	}
+	wgvk_free(queue);
+}
+
 void vkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex,
                       VkQueue *pQueue) {
 	if (!device || !pQueue) {
@@ -91,7 +99,7 @@ void vkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queue
 		return;
 	}
 
-	wgvk_object_init(&queue->base, NULL);
+	wgvk_object_init(&queue->base, destroy_queue);
 	queue->device = device;
 	queue->wgpu_queue = device->wgpu_queue;
 	wgpuQueueAddRef(queue->wgpu_queue);

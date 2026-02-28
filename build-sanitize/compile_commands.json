@@ -1,0 +1,1106 @@
+[
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/build-sanitize/_deps/vulkan_headers-src/include -I/home/georg/code/webvulkan/src -g -std=gnu11 -Wall -Wextra -Wpedantic -fsanitize=address,undefined -o CMakeFiles/webvulkan_native.dir/src/shaders/spirv_parser.c.o -c /home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "output": "CMakeFiles/webvulkan_native.dir/src/shaders/spirv_parser.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/build-sanitize/_deps/vulkan_headers-src/include -I/home/georg/code/webvulkan/src -g -std=gnu11 -Wall -Wextra -Wpedantic -fsanitize=address,undefined -o CMakeFiles/webvulkan_native.dir/src/shaders/wgsl_gen.c.o -c /home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "output": "CMakeFiles/webvulkan_native.dir/src/shaders/wgsl_gen.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/build-sanitize/_deps/vulkan_headers-src/include -I/home/georg/code/webvulkan/src -g -std=gnu11 -Wall -Wextra -Wpedantic -fsanitize=address,undefined -o CMakeFiles/webvulkan_native.dir/src/util/log.c.o -c /home/georg/code/webvulkan/src/util/log.c",
+  "file": "/home/georg/code/webvulkan/src/util/log.c",
+  "output": "CMakeFiles/webvulkan_native.dir/src/util/log.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -I/home/georg/code/webvulkan/build-sanitize/_deps/vulkan_headers-src/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_spirv.dir/test_spirv.c.o -c /home/georg/code/webvulkan/tests/test_spirv.c",
+  "file": "/home/georg/code/webvulkan/tests/test_spirv.c",
+  "output": "tests/CMakeFiles/test_spirv.dir/test_spirv.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/test_instance.c.o -c /home/georg/code/webvulkan/tests/test_instance.c",
+  "file": "/home/georg/code/webvulkan/tests/test_instance.c",
+  "output": "tests/CMakeFiles/test_instance.dir/test_instance.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/core/instance.c.o -c /home/georg/code/webvulkan/src/core/instance.c",
+  "file": "/home/georg/code/webvulkan/src/core/instance.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/core/instance.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/core/device.c.o -c /home/georg/code/webvulkan/src/core/device.c",
+  "file": "/home/georg/code/webvulkan/src/core/device.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/core/device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/core/physical_device.c.o -c /home/georg/code/webvulkan/src/core/physical_device.c",
+  "file": "/home/georg/code/webvulkan/src/core/physical_device.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/core/physical_device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/core/queue.c.o -c /home/georg/code/webvulkan/src/core/queue.c",
+  "file": "/home/georg/code/webvulkan/src/core/queue.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/core/queue.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/buffer.c.o -c /home/georg/code/webvulkan/src/objects/buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/buffer.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/image.c.o -c /home/georg/code/webvulkan/src/objects/image.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/image.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/pipeline.c.o -c /home/georg/code/webvulkan/src/objects/pipeline.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/pipeline.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/pipeline_layout.c.o -c /home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/pipeline_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/shader_module.c.o -c /home/georg/code/webvulkan/src/objects/shader_module.c",
+  "file": "/home/georg/code/webvulkan/src/objects/shader_module.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/shader_module.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/descriptor_set.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/descriptor_set.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/descriptor_set_layout.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/descriptor_set_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/sampler.c.o -c /home/georg/code/webvulkan/src/objects/sampler.c",
+  "file": "/home/georg/code/webvulkan/src/objects/sampler.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/sampler.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/image_view.c.o -c /home/georg/code/webvulkan/src/objects/image_view.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image_view.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/image_view.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/render_pass.c.o -c /home/georg/code/webvulkan/src/objects/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/objects/render_pass.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/framebuffer.c.o -c /home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/framebuffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/command_pool.c.o -c /home/georg/code/webvulkan/src/objects/command_pool.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_pool.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/command_pool.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/command_buffer.c.o -c /home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/command_buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/semaphore.c.o -c /home/georg/code/webvulkan/src/objects/semaphore.c",
+  "file": "/home/georg/code/webvulkan/src/objects/semaphore.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/semaphore.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/fence.c.o -c /home/georg/code/webvulkan/src/objects/fence.c",
+  "file": "/home/georg/code/webvulkan/src/objects/fence.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/fence.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/objects/event.c.o -c /home/georg/code/webvulkan/src/objects/event.c",
+  "file": "/home/georg/code/webvulkan/src/objects/event.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/objects/event.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/commands/draw.c.o -c /home/georg/code/webvulkan/src/commands/draw.c",
+  "file": "/home/georg/code/webvulkan/src/commands/draw.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/commands/draw.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/commands/compute.c.o -c /home/georg/code/webvulkan/src/commands/compute.c",
+  "file": "/home/georg/code/webvulkan/src/commands/compute.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/commands/compute.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/commands/copy.c.o -c /home/georg/code/webvulkan/src/commands/copy.c",
+  "file": "/home/georg/code/webvulkan/src/commands/copy.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/commands/copy.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/commands/sync.c.o -c /home/georg/code/webvulkan/src/commands/sync.c",
+  "file": "/home/georg/code/webvulkan/src/commands/sync.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/commands/sync.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/commands/render_pass.c.o -c /home/georg/code/webvulkan/src/commands/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/render_pass.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/commands/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/commands/subpass.c.o -c /home/georg/code/webvulkan/src/commands/subpass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/subpass.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/commands/subpass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/sync/barrier.c.o -c /home/georg/code/webvulkan/src/sync/barrier.c",
+  "file": "/home/georg/code/webvulkan/src/sync/barrier.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/sync/barrier.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/sync/push_constants.c.o -c /home/georg/code/webvulkan/src/sync/push_constants.c",
+  "file": "/home/georg/code/webvulkan/src/sync/push_constants.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/sync/push_constants.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/memory/device_memory.c.o -c /home/georg/code/webvulkan/src/memory/device_memory.c",
+  "file": "/home/georg/code/webvulkan/src/memory/device_memory.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/memory/device_memory.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/util/list.c.o -c /home/georg/code/webvulkan/src/util/list.c",
+  "file": "/home/georg/code/webvulkan/src/util/list.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/util/list.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/util/hash_table.c.o -c /home/georg/code/webvulkan/src/util/hash_table.c",
+  "file": "/home/georg/code/webvulkan/src/util/hash_table.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/util/hash_table.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/util/log.c.o -c /home/georg/code/webvulkan/src/util/log.c",
+  "file": "/home/georg/code/webvulkan/src/util/log.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/util/log.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/shaders/spirv_parser.c.o -c /home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/shaders/spirv_parser.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/__/src/shaders/wgsl_gen.c.o -c /home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "output": "tests/CMakeFiles/test_instance.dir/__/src/shaders/wgsl_gen.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_instance.dir/webgpu_stubs.c.o -c /home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "file": "/home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "output": "tests/CMakeFiles/test_instance.dir/webgpu_stubs.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/test_buffer.c.o -c /home/georg/code/webvulkan/tests/test_buffer.c",
+  "file": "/home/georg/code/webvulkan/tests/test_buffer.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/test_buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/core/instance.c.o -c /home/georg/code/webvulkan/src/core/instance.c",
+  "file": "/home/georg/code/webvulkan/src/core/instance.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/core/instance.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/core/device.c.o -c /home/georg/code/webvulkan/src/core/device.c",
+  "file": "/home/georg/code/webvulkan/src/core/device.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/core/device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/core/physical_device.c.o -c /home/georg/code/webvulkan/src/core/physical_device.c",
+  "file": "/home/georg/code/webvulkan/src/core/physical_device.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/core/physical_device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/core/queue.c.o -c /home/georg/code/webvulkan/src/core/queue.c",
+  "file": "/home/georg/code/webvulkan/src/core/queue.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/core/queue.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/buffer.c.o -c /home/georg/code/webvulkan/src/objects/buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/buffer.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/image.c.o -c /home/georg/code/webvulkan/src/objects/image.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/image.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/pipeline.c.o -c /home/georg/code/webvulkan/src/objects/pipeline.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/pipeline.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/pipeline_layout.c.o -c /home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/pipeline_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/shader_module.c.o -c /home/georg/code/webvulkan/src/objects/shader_module.c",
+  "file": "/home/georg/code/webvulkan/src/objects/shader_module.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/shader_module.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/descriptor_set.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/descriptor_set.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/descriptor_set_layout.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/descriptor_set_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/sampler.c.o -c /home/georg/code/webvulkan/src/objects/sampler.c",
+  "file": "/home/georg/code/webvulkan/src/objects/sampler.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/sampler.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/image_view.c.o -c /home/georg/code/webvulkan/src/objects/image_view.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image_view.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/image_view.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/render_pass.c.o -c /home/georg/code/webvulkan/src/objects/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/objects/render_pass.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/framebuffer.c.o -c /home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/framebuffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/command_pool.c.o -c /home/georg/code/webvulkan/src/objects/command_pool.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_pool.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/command_pool.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/command_buffer.c.o -c /home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/command_buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/semaphore.c.o -c /home/georg/code/webvulkan/src/objects/semaphore.c",
+  "file": "/home/georg/code/webvulkan/src/objects/semaphore.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/semaphore.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/fence.c.o -c /home/georg/code/webvulkan/src/objects/fence.c",
+  "file": "/home/georg/code/webvulkan/src/objects/fence.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/fence.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/objects/event.c.o -c /home/georg/code/webvulkan/src/objects/event.c",
+  "file": "/home/georg/code/webvulkan/src/objects/event.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/objects/event.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/commands/draw.c.o -c /home/georg/code/webvulkan/src/commands/draw.c",
+  "file": "/home/georg/code/webvulkan/src/commands/draw.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/commands/draw.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/commands/compute.c.o -c /home/georg/code/webvulkan/src/commands/compute.c",
+  "file": "/home/georg/code/webvulkan/src/commands/compute.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/commands/compute.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/commands/copy.c.o -c /home/georg/code/webvulkan/src/commands/copy.c",
+  "file": "/home/georg/code/webvulkan/src/commands/copy.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/commands/copy.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/commands/sync.c.o -c /home/georg/code/webvulkan/src/commands/sync.c",
+  "file": "/home/georg/code/webvulkan/src/commands/sync.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/commands/sync.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/commands/render_pass.c.o -c /home/georg/code/webvulkan/src/commands/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/render_pass.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/commands/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/commands/subpass.c.o -c /home/georg/code/webvulkan/src/commands/subpass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/subpass.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/commands/subpass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/sync/barrier.c.o -c /home/georg/code/webvulkan/src/sync/barrier.c",
+  "file": "/home/georg/code/webvulkan/src/sync/barrier.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/sync/barrier.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/sync/push_constants.c.o -c /home/georg/code/webvulkan/src/sync/push_constants.c",
+  "file": "/home/georg/code/webvulkan/src/sync/push_constants.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/sync/push_constants.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/memory/device_memory.c.o -c /home/georg/code/webvulkan/src/memory/device_memory.c",
+  "file": "/home/georg/code/webvulkan/src/memory/device_memory.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/memory/device_memory.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/util/list.c.o -c /home/georg/code/webvulkan/src/util/list.c",
+  "file": "/home/georg/code/webvulkan/src/util/list.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/util/list.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/util/hash_table.c.o -c /home/georg/code/webvulkan/src/util/hash_table.c",
+  "file": "/home/georg/code/webvulkan/src/util/hash_table.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/util/hash_table.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/util/log.c.o -c /home/georg/code/webvulkan/src/util/log.c",
+  "file": "/home/georg/code/webvulkan/src/util/log.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/util/log.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/shaders/spirv_parser.c.o -c /home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/shaders/spirv_parser.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/__/src/shaders/wgsl_gen.c.o -c /home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/__/src/shaders/wgsl_gen.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_buffer.dir/webgpu_stubs.c.o -c /home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "file": "/home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "output": "tests/CMakeFiles/test_buffer.dir/webgpu_stubs.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/test_device.c.o -c /home/georg/code/webvulkan/tests/test_device.c",
+  "file": "/home/georg/code/webvulkan/tests/test_device.c",
+  "output": "tests/CMakeFiles/test_device.dir/test_device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/core/instance.c.o -c /home/georg/code/webvulkan/src/core/instance.c",
+  "file": "/home/georg/code/webvulkan/src/core/instance.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/core/instance.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/core/device.c.o -c /home/georg/code/webvulkan/src/core/device.c",
+  "file": "/home/georg/code/webvulkan/src/core/device.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/core/device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/core/physical_device.c.o -c /home/georg/code/webvulkan/src/core/physical_device.c",
+  "file": "/home/georg/code/webvulkan/src/core/physical_device.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/core/physical_device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/core/queue.c.o -c /home/georg/code/webvulkan/src/core/queue.c",
+  "file": "/home/georg/code/webvulkan/src/core/queue.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/core/queue.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/buffer.c.o -c /home/georg/code/webvulkan/src/objects/buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/buffer.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/image.c.o -c /home/georg/code/webvulkan/src/objects/image.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/image.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/pipeline.c.o -c /home/georg/code/webvulkan/src/objects/pipeline.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/pipeline.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/pipeline_layout.c.o -c /home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/pipeline_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/shader_module.c.o -c /home/georg/code/webvulkan/src/objects/shader_module.c",
+  "file": "/home/georg/code/webvulkan/src/objects/shader_module.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/shader_module.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/descriptor_set.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/descriptor_set.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/descriptor_set_layout.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/descriptor_set_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/sampler.c.o -c /home/georg/code/webvulkan/src/objects/sampler.c",
+  "file": "/home/georg/code/webvulkan/src/objects/sampler.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/sampler.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/image_view.c.o -c /home/georg/code/webvulkan/src/objects/image_view.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image_view.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/image_view.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/render_pass.c.o -c /home/georg/code/webvulkan/src/objects/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/objects/render_pass.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/framebuffer.c.o -c /home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/framebuffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/command_pool.c.o -c /home/georg/code/webvulkan/src/objects/command_pool.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_pool.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/command_pool.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/command_buffer.c.o -c /home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/command_buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/semaphore.c.o -c /home/georg/code/webvulkan/src/objects/semaphore.c",
+  "file": "/home/georg/code/webvulkan/src/objects/semaphore.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/semaphore.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/fence.c.o -c /home/georg/code/webvulkan/src/objects/fence.c",
+  "file": "/home/georg/code/webvulkan/src/objects/fence.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/fence.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/objects/event.c.o -c /home/georg/code/webvulkan/src/objects/event.c",
+  "file": "/home/georg/code/webvulkan/src/objects/event.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/objects/event.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/commands/draw.c.o -c /home/georg/code/webvulkan/src/commands/draw.c",
+  "file": "/home/georg/code/webvulkan/src/commands/draw.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/commands/draw.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/commands/compute.c.o -c /home/georg/code/webvulkan/src/commands/compute.c",
+  "file": "/home/georg/code/webvulkan/src/commands/compute.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/commands/compute.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/commands/copy.c.o -c /home/georg/code/webvulkan/src/commands/copy.c",
+  "file": "/home/georg/code/webvulkan/src/commands/copy.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/commands/copy.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/commands/sync.c.o -c /home/georg/code/webvulkan/src/commands/sync.c",
+  "file": "/home/georg/code/webvulkan/src/commands/sync.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/commands/sync.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/commands/render_pass.c.o -c /home/georg/code/webvulkan/src/commands/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/render_pass.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/commands/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/commands/subpass.c.o -c /home/georg/code/webvulkan/src/commands/subpass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/subpass.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/commands/subpass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/sync/barrier.c.o -c /home/georg/code/webvulkan/src/sync/barrier.c",
+  "file": "/home/georg/code/webvulkan/src/sync/barrier.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/sync/barrier.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/sync/push_constants.c.o -c /home/georg/code/webvulkan/src/sync/push_constants.c",
+  "file": "/home/georg/code/webvulkan/src/sync/push_constants.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/sync/push_constants.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/memory/device_memory.c.o -c /home/georg/code/webvulkan/src/memory/device_memory.c",
+  "file": "/home/georg/code/webvulkan/src/memory/device_memory.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/memory/device_memory.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/util/list.c.o -c /home/georg/code/webvulkan/src/util/list.c",
+  "file": "/home/georg/code/webvulkan/src/util/list.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/util/list.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/util/hash_table.c.o -c /home/georg/code/webvulkan/src/util/hash_table.c",
+  "file": "/home/georg/code/webvulkan/src/util/hash_table.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/util/hash_table.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/util/log.c.o -c /home/georg/code/webvulkan/src/util/log.c",
+  "file": "/home/georg/code/webvulkan/src/util/log.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/util/log.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/shaders/spirv_parser.c.o -c /home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/shaders/spirv_parser.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/__/src/shaders/wgsl_gen.c.o -c /home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "output": "tests/CMakeFiles/test_device.dir/__/src/shaders/wgsl_gen.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_device.dir/webgpu_stubs.c.o -c /home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "file": "/home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "output": "tests/CMakeFiles/test_device.dir/webgpu_stubs.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/test_image.c.o -c /home/georg/code/webvulkan/tests/test_image.c",
+  "file": "/home/georg/code/webvulkan/tests/test_image.c",
+  "output": "tests/CMakeFiles/test_image.dir/test_image.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/core/instance.c.o -c /home/georg/code/webvulkan/src/core/instance.c",
+  "file": "/home/georg/code/webvulkan/src/core/instance.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/core/instance.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/core/device.c.o -c /home/georg/code/webvulkan/src/core/device.c",
+  "file": "/home/georg/code/webvulkan/src/core/device.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/core/device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/core/physical_device.c.o -c /home/georg/code/webvulkan/src/core/physical_device.c",
+  "file": "/home/georg/code/webvulkan/src/core/physical_device.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/core/physical_device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/core/queue.c.o -c /home/georg/code/webvulkan/src/core/queue.c",
+  "file": "/home/georg/code/webvulkan/src/core/queue.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/core/queue.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/buffer.c.o -c /home/georg/code/webvulkan/src/objects/buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/buffer.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/image.c.o -c /home/georg/code/webvulkan/src/objects/image.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/image.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/pipeline.c.o -c /home/georg/code/webvulkan/src/objects/pipeline.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/pipeline.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/pipeline_layout.c.o -c /home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/pipeline_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/shader_module.c.o -c /home/georg/code/webvulkan/src/objects/shader_module.c",
+  "file": "/home/georg/code/webvulkan/src/objects/shader_module.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/shader_module.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/descriptor_set.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/descriptor_set.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/descriptor_set_layout.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/descriptor_set_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/sampler.c.o -c /home/georg/code/webvulkan/src/objects/sampler.c",
+  "file": "/home/georg/code/webvulkan/src/objects/sampler.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/sampler.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/image_view.c.o -c /home/georg/code/webvulkan/src/objects/image_view.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image_view.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/image_view.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/render_pass.c.o -c /home/georg/code/webvulkan/src/objects/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/objects/render_pass.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/framebuffer.c.o -c /home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/framebuffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/command_pool.c.o -c /home/georg/code/webvulkan/src/objects/command_pool.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_pool.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/command_pool.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/command_buffer.c.o -c /home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/command_buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/semaphore.c.o -c /home/georg/code/webvulkan/src/objects/semaphore.c",
+  "file": "/home/georg/code/webvulkan/src/objects/semaphore.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/semaphore.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/fence.c.o -c /home/georg/code/webvulkan/src/objects/fence.c",
+  "file": "/home/georg/code/webvulkan/src/objects/fence.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/fence.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/objects/event.c.o -c /home/georg/code/webvulkan/src/objects/event.c",
+  "file": "/home/georg/code/webvulkan/src/objects/event.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/objects/event.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/commands/draw.c.o -c /home/georg/code/webvulkan/src/commands/draw.c",
+  "file": "/home/georg/code/webvulkan/src/commands/draw.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/commands/draw.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/commands/compute.c.o -c /home/georg/code/webvulkan/src/commands/compute.c",
+  "file": "/home/georg/code/webvulkan/src/commands/compute.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/commands/compute.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/commands/copy.c.o -c /home/georg/code/webvulkan/src/commands/copy.c",
+  "file": "/home/georg/code/webvulkan/src/commands/copy.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/commands/copy.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/commands/sync.c.o -c /home/georg/code/webvulkan/src/commands/sync.c",
+  "file": "/home/georg/code/webvulkan/src/commands/sync.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/commands/sync.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/commands/render_pass.c.o -c /home/georg/code/webvulkan/src/commands/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/render_pass.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/commands/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/commands/subpass.c.o -c /home/georg/code/webvulkan/src/commands/subpass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/subpass.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/commands/subpass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/sync/barrier.c.o -c /home/georg/code/webvulkan/src/sync/barrier.c",
+  "file": "/home/georg/code/webvulkan/src/sync/barrier.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/sync/barrier.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/sync/push_constants.c.o -c /home/georg/code/webvulkan/src/sync/push_constants.c",
+  "file": "/home/georg/code/webvulkan/src/sync/push_constants.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/sync/push_constants.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/memory/device_memory.c.o -c /home/georg/code/webvulkan/src/memory/device_memory.c",
+  "file": "/home/georg/code/webvulkan/src/memory/device_memory.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/memory/device_memory.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/util/list.c.o -c /home/georg/code/webvulkan/src/util/list.c",
+  "file": "/home/georg/code/webvulkan/src/util/list.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/util/list.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/util/hash_table.c.o -c /home/georg/code/webvulkan/src/util/hash_table.c",
+  "file": "/home/georg/code/webvulkan/src/util/hash_table.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/util/hash_table.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/util/log.c.o -c /home/georg/code/webvulkan/src/util/log.c",
+  "file": "/home/georg/code/webvulkan/src/util/log.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/util/log.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/shaders/spirv_parser.c.o -c /home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/shaders/spirv_parser.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/__/src/shaders/wgsl_gen.c.o -c /home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "output": "tests/CMakeFiles/test_image.dir/__/src/shaders/wgsl_gen.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_image.dir/webgpu_stubs.c.o -c /home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "file": "/home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "output": "tests/CMakeFiles/test_image.dir/webgpu_stubs.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/test_pipeline.c.o -c /home/georg/code/webvulkan/tests/test_pipeline.c",
+  "file": "/home/georg/code/webvulkan/tests/test_pipeline.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/test_pipeline.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/core/instance.c.o -c /home/georg/code/webvulkan/src/core/instance.c",
+  "file": "/home/georg/code/webvulkan/src/core/instance.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/core/instance.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/core/device.c.o -c /home/georg/code/webvulkan/src/core/device.c",
+  "file": "/home/georg/code/webvulkan/src/core/device.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/core/device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/core/physical_device.c.o -c /home/georg/code/webvulkan/src/core/physical_device.c",
+  "file": "/home/georg/code/webvulkan/src/core/physical_device.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/core/physical_device.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/core/queue.c.o -c /home/georg/code/webvulkan/src/core/queue.c",
+  "file": "/home/georg/code/webvulkan/src/core/queue.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/core/queue.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/buffer.c.o -c /home/georg/code/webvulkan/src/objects/buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/buffer.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/image.c.o -c /home/georg/code/webvulkan/src/objects/image.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/image.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/pipeline.c.o -c /home/georg/code/webvulkan/src/objects/pipeline.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/pipeline.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/pipeline_layout.c.o -c /home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/pipeline_layout.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/pipeline_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/shader_module.c.o -c /home/georg/code/webvulkan/src/objects/shader_module.c",
+  "file": "/home/georg/code/webvulkan/src/objects/shader_module.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/shader_module.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/descriptor_set.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/descriptor_set.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/descriptor_set_layout.c.o -c /home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "file": "/home/georg/code/webvulkan/src/objects/descriptor_set_layout.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/descriptor_set_layout.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/sampler.c.o -c /home/georg/code/webvulkan/src/objects/sampler.c",
+  "file": "/home/georg/code/webvulkan/src/objects/sampler.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/sampler.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/image_view.c.o -c /home/georg/code/webvulkan/src/objects/image_view.c",
+  "file": "/home/georg/code/webvulkan/src/objects/image_view.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/image_view.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/render_pass.c.o -c /home/georg/code/webvulkan/src/objects/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/objects/render_pass.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/framebuffer.c.o -c /home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/framebuffer.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/framebuffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/command_pool.c.o -c /home/georg/code/webvulkan/src/objects/command_pool.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_pool.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/command_pool.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/command_buffer.c.o -c /home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "file": "/home/georg/code/webvulkan/src/objects/command_buffer.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/command_buffer.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/semaphore.c.o -c /home/georg/code/webvulkan/src/objects/semaphore.c",
+  "file": "/home/georg/code/webvulkan/src/objects/semaphore.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/semaphore.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/fence.c.o -c /home/georg/code/webvulkan/src/objects/fence.c",
+  "file": "/home/georg/code/webvulkan/src/objects/fence.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/fence.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/objects/event.c.o -c /home/georg/code/webvulkan/src/objects/event.c",
+  "file": "/home/georg/code/webvulkan/src/objects/event.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/objects/event.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/commands/draw.c.o -c /home/georg/code/webvulkan/src/commands/draw.c",
+  "file": "/home/georg/code/webvulkan/src/commands/draw.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/commands/draw.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/commands/compute.c.o -c /home/georg/code/webvulkan/src/commands/compute.c",
+  "file": "/home/georg/code/webvulkan/src/commands/compute.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/commands/compute.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/commands/copy.c.o -c /home/georg/code/webvulkan/src/commands/copy.c",
+  "file": "/home/georg/code/webvulkan/src/commands/copy.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/commands/copy.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/commands/sync.c.o -c /home/georg/code/webvulkan/src/commands/sync.c",
+  "file": "/home/georg/code/webvulkan/src/commands/sync.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/commands/sync.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/commands/render_pass.c.o -c /home/georg/code/webvulkan/src/commands/render_pass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/render_pass.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/commands/render_pass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/commands/subpass.c.o -c /home/georg/code/webvulkan/src/commands/subpass.c",
+  "file": "/home/georg/code/webvulkan/src/commands/subpass.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/commands/subpass.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/sync/barrier.c.o -c /home/georg/code/webvulkan/src/sync/barrier.c",
+  "file": "/home/georg/code/webvulkan/src/sync/barrier.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/sync/barrier.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/sync/push_constants.c.o -c /home/georg/code/webvulkan/src/sync/push_constants.c",
+  "file": "/home/georg/code/webvulkan/src/sync/push_constants.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/sync/push_constants.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/memory/device_memory.c.o -c /home/georg/code/webvulkan/src/memory/device_memory.c",
+  "file": "/home/georg/code/webvulkan/src/memory/device_memory.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/memory/device_memory.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/util/list.c.o -c /home/georg/code/webvulkan/src/util/list.c",
+  "file": "/home/georg/code/webvulkan/src/util/list.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/util/list.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/util/hash_table.c.o -c /home/georg/code/webvulkan/src/util/hash_table.c",
+  "file": "/home/georg/code/webvulkan/src/util/hash_table.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/util/hash_table.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/util/log.c.o -c /home/georg/code/webvulkan/src/util/log.c",
+  "file": "/home/georg/code/webvulkan/src/util/log.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/util/log.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/shaders/spirv_parser.c.o -c /home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/spirv_parser.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/shaders/spirv_parser.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/__/src/shaders/wgsl_gen.c.o -c /home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "file": "/home/georg/code/webvulkan/src/shaders/wgsl_gen.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/__/src/shaders/wgsl_gen.c.o"
+},
+{
+  "directory": "/home/georg/code/webvulkan/build-sanitize/tests",
+  "command": "/usr/bin/clang  -I/home/georg/code/webvulkan/src -I/home/georg/code/webvulkan/include -g -std=gnu11 -Wall -Wextra -fsanitize=address,undefined -o CMakeFiles/test_pipeline.dir/webgpu_stubs.c.o -c /home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "file": "/home/georg/code/webvulkan/tests/webgpu_stubs.c",
+  "output": "tests/CMakeFiles/test_pipeline.dir/webgpu_stubs.c.o"
+}
+]

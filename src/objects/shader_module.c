@@ -7,6 +7,11 @@
 
 static void destroy_shader_module(void *obj) {
 	VkShaderModule module = (VkShaderModule)obj;
+	for (int i = 0; i < WGVK_SHADER_STAGE_COUNT; i++) {
+		if (module->stage_shaders[i]) {
+			wgpuShaderModuleRelease(module->stage_shaders[i]);
+		}
+	}
 	if (module->wgpu_shader) {
 		wgpuShaderModuleRelease(module->wgpu_shader);
 	}
@@ -45,6 +50,8 @@ VkResult vkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo *p
 	module->wgsl_source = NULL;
 	module->spirv_code = NULL;
 	module->spirv_size = 0;
+	for (int i = 0; i < WGVK_SHADER_STAGE_COUNT; i++)
+		module->stage_shaders[i] = NULL;
 
 	if (pCreateInfo->codeSize > 0 && pCreateInfo->pCode) {
 		if (is_wgsl_source(pCreateInfo->pCode, pCreateInfo->codeSize)) {
@@ -56,6 +63,24 @@ VkResult vkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo *p
 			}
 			memcpy(module->wgsl_source, pCreateInfo->pCode, wgsl_len);
 			module->wgsl_source[wgsl_len] = '\0';
+
+			WGPUShaderSourceWGSL wgsl_desc = {
+			    .chain =
+			        {
+			            .next = NULL,
+			            .sType = WGPUSType_ShaderSourceWGSL,
+			        },
+			    .code = (WGPUStringView){.data = module->wgsl_source, .length = WGPU_STRLEN},
+			};
+			WGPUShaderModuleDescriptor desc = {
+			    .nextInChain = (const WGPUChainedStruct *)&wgsl_desc,
+			};
+			module->wgpu_shader = wgpuDeviceCreateShaderModule(device->wgpu_device, &desc);
+			if (!module->wgpu_shader) {
+				wgvk_free(module->wgsl_source);
+				wgvk_free(module);
+				return VK_ERROR_OUT_OF_DEVICE_MEMORY;
+			}
 		} else {
 			module->spirv_code = wgvk_alloc(pCreateInfo->codeSize);
 			if (!module->spirv_code) {
@@ -66,56 +91,51 @@ VkResult vkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo *p
 			module->spirv_size = pCreateInfo->codeSize;
 
 			WgvkSpvModule spv_module = {0};
-			if (wgvk_spirv_parse(&spv_module, pCreateInfo->pCode, pCreateInfo->codeSize / 4) == 0) {
-				WgvkWgslGenerator gen = {0};
-				uint32_t exec_model = WGVK_SPV_EXEC_MODEL_VERTEX;
-				for (uint32_t i = 0; i < spv_module.entry_point_count; i++) {
-					exec_model = spv_module.entry_points[i].exec_model;
-					break;
-				}
-				if (wgvk_wgsl_init(&gen, &spv_module, exec_model) == 0) {
-					module->wgsl_source = wgvk_wgsl_generate(&gen);
-					wgvk_wgsl_free(&gen);
-				}
-				wgvk_spirv_free(&spv_module);
-			}
-
-			if (!module->wgsl_source) {
-				/* SPIR-V transpilation produced no WGSL output. Rather than silently
-				 * substituting a stub shader that would produce incorrect rendering,
-				 * report the failure so the caller can handle it. */
-				WGVK_ERROR(WGVK_LOG_CAT_SHADER,
-				           "SPIR-V to WGSL transpilation failed: no WGSL output generated. "
-				           "Consider passing WGSL source directly to vkCreateShaderModule.");
+			if (wgvk_spirv_parse(&spv_module, pCreateInfo->pCode, pCreateInfo->codeSize / 4) != 0) {
 				wgvk_free(module->spirv_code);
 				wgvk_free(module);
 				return VK_ERROR_INVALID_SHADER_NV;
 			}
 
-			WGPUShaderSourceWGSL wgsl_desc = {
-			    .chain =
-			        {
-			            .next = NULL,
-			            .sType = WGPUSType_ShaderSourceWGSL,
-			        },
-			    .code = (WGPUStringView){.data = module->wgsl_source, .length = WGPU_STRLEN},
-			};
+			int any_ok = 0;
+			for (uint32_t i = 0; i < spv_module.entry_point_count; i++) {
+				uint32_t em = spv_module.entry_points[i].exec_model;
+				if (em >= (uint32_t)WGVK_SHADER_STAGE_COUNT)
+					continue;
 
-			WGPUShaderModuleDescriptor desc = {
-			    .nextInChain = (const WGPUChainedStruct *)&wgsl_desc,
-			};
+				WgvkWgslGenerator gen = {0};
+				if (wgvk_wgsl_init(&gen, &spv_module, em) != 0)
+					continue;
+				char *wgsl = wgvk_wgsl_generate(&gen);
+				wgvk_wgsl_free(&gen);
+				if (!wgsl)
+					continue;
 
-			module->wgpu_shader = wgpuDeviceCreateShaderModule(device->wgpu_device, &desc);
-			if (!module->wgpu_shader) {
-				wgvk_free(module->wgsl_source);
+				WGPUShaderSourceWGSL wgsl_desc = {
+				    .chain = {.next = NULL, .sType = WGPUSType_ShaderSourceWGSL},
+				    .code = (WGPUStringView){.data = wgsl, .length = WGPU_STRLEN},
+				};
+				WGPUShaderModuleDescriptor desc = {
+				    .nextInChain = (const WGPUChainedStruct *)&wgsl_desc,
+				};
+				WGPUShaderModule sm = wgpuDeviceCreateShaderModule(device->wgpu_device, &desc);
+				free(wgsl);
+				if (sm) {
+					module->stage_shaders[em] = sm;
+					any_ok = 1;
+				}
+			}
+			wgvk_spirv_free(&spv_module);
+
+			if (!any_ok) {
+				WGVK_ERROR(WGVK_LOG_CAT_SHADER,
+				           "SPIR-V to WGSL transpilation failed: no entry point produced a "
+				           "valid WGPUShaderModule. Consider passing WGSL source directly.");
 				wgvk_free(module->spirv_code);
 				wgvk_free(module);
-				return VK_ERROR_OUT_OF_DEVICE_MEMORY;
+				return VK_ERROR_INVALID_SHADER_NV;
 			}
 		}
-
-		*pShaderModule = module;
-		return VK_SUCCESS;
 	}
 
 	*pShaderModule = module;

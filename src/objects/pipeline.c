@@ -1,4 +1,5 @@
 #include "webvulkan_internal.h"
+#include "../shaders/spirv_parser.h"
 
 static void destroy_pipeline(void *obj) {
 	VkPipeline pipeline = (VkPipeline)obj;
@@ -12,6 +13,14 @@ static void destroy_pipeline(void *obj) {
 		}
 	}
 	wgvk_free(pipeline);
+}
+
+static WGPUShaderModule shader_module_for_stage(VkShaderModule mod, uint32_t exec_model) {
+	if (!mod)
+		return NULL;
+	if (exec_model < (uint32_t)WGVK_SHADER_STAGE_COUNT && mod->stage_shaders[exec_model])
+		return mod->stage_shaders[exec_model];
+	return mod->wgpu_shader;
 }
 
 static WGPUVertexFormat vk_format_to_wgpu(uint32_t vk_format) {
@@ -78,7 +87,7 @@ VkResult vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCach
 		if (info->pStages && info->stageCount > 0) {
 			for (uint32_t s = 0; s < info->stageCount; s++) {
 				if (info->pStages[s].stage == VK_SHADER_STAGE_VERTEX_BIT) {
-					vertex_state.module = info->pStages[s].module->wgpu_shader;
+					vertex_state.module = shader_module_for_stage(info->pStages[s].module, WGVK_SPV_EXEC_MODEL_VERTEX);
 					vertex_state.entryPoint =
 					    (WGPUStringView){.data = info->pStages[s].pName, .length = WGPU_STRLEN};
 				}
@@ -144,7 +153,7 @@ VkResult vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCach
 		if (info->pStages && info->stageCount > 1) {
 			for (uint32_t s = 0; s < info->stageCount; s++) {
 				if (info->pStages[s].stage == VK_SHADER_STAGE_FRAGMENT_BIT) {
-					fragment_state.module = info->pStages[s].module->wgpu_shader;
+					fragment_state.module = shader_module_for_stage(info->pStages[s].module, WGVK_SPV_EXEC_MODEL_FRAGMENT);
 					fragment_state.entryPoint =
 					    (WGPUStringView){.data = info->pStages[s].pName, .length = WGPU_STRLEN};
 				}
@@ -170,7 +179,7 @@ VkResult vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCach
 		WGPUPrimitiveState primitive_state = {
 		    .topology = WGPUPrimitiveTopology_TriangleList,
 		    .stripIndexFormat = WGPUIndexFormat_Undefined,
-		    .frontFace = WGPUFrontFace_CW,
+		    .frontFace = WGPUFrontFace_CCW,
 		    .cullMode = WGPUCullMode_None,
 		};
 
@@ -197,12 +206,69 @@ VkResult vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCach
 			}
 		}
 
+		/* Map rasterization state: cull mode and front face. */
+		if (info->pRasterizationState) {
+			const VkPipelineRasterizationStateCreateInfo *raster = info->pRasterizationState;
+			switch (raster->cullMode) {
+			case VK_CULL_MODE_FRONT_BIT:
+				primitive_state.cullMode = WGPUCullMode_Front;
+				break;
+			case VK_CULL_MODE_BACK_BIT:
+				primitive_state.cullMode = WGPUCullMode_Back;
+				break;
+			default:
+				primitive_state.cullMode = WGPUCullMode_None;
+				break;
+			}
+			primitive_state.frontFace =
+			    (raster->frontFace == VK_FRONT_FACE_CLOCKWISE) ? WGPUFrontFace_CW : WGPUFrontFace_CCW;
+		}
+
+		/* Map depth/stencil state. */
+		WGPUDepthStencilState depth_stencil_state = {0};
+		VkBool32 has_depth_stencil = VK_FALSE;
+		if (info->pDepthStencilState) {
+			const VkPipelineDepthStencilStateCreateInfo *ds = info->pDepthStencilState;
+			/* Determine depth format from render pass if available. */
+			WGPUTextureFormat depth_format = WGPUTextureFormat_Depth24Plus;
+			if (info->renderPass) {
+				uint32_t vk_depth_fmt = info->renderPass->depth_stencil_format;
+				if (vk_depth_fmt == 124 /* VK_FORMAT_D16_UNORM */)
+					depth_format = WGPUTextureFormat_Depth16Unorm;
+				else if (vk_depth_fmt == 126 /* VK_FORMAT_D32_SFLOAT */)
+					depth_format = WGPUTextureFormat_Depth32Float;
+				else if (vk_depth_fmt == 129 /* VK_FORMAT_D24_UNORM_S8_UINT */)
+					depth_format = WGPUTextureFormat_Depth24PlusStencil8;
+				else if (vk_depth_fmt == 130 /* VK_FORMAT_D32_SFLOAT_S8_UINT */)
+					depth_format = WGPUTextureFormat_Depth32FloatStencil8;
+			}
+			static const WGPUCompareFunction vk_compare_to_wgpu[] = {
+			    WGPUCompareFunction_Never,       /* VK_COMPARE_OP_NEVER */
+			    WGPUCompareFunction_Less,        /* VK_COMPARE_OP_LESS */
+			    WGPUCompareFunction_Equal,       /* VK_COMPARE_OP_EQUAL */
+			    WGPUCompareFunction_LessEqual,   /* VK_COMPARE_OP_LESS_OR_EQUAL */
+			    WGPUCompareFunction_Greater,     /* VK_COMPARE_OP_GREATER */
+			    WGPUCompareFunction_NotEqual,    /* VK_COMPARE_OP_NOT_EQUAL */
+			    WGPUCompareFunction_GreaterEqual,/* VK_COMPARE_OP_GREATER_OR_EQUAL */
+			    WGPUCompareFunction_Always,      /* VK_COMPARE_OP_ALWAYS */
+			};
+			uint32_t cmp_idx = (uint32_t)ds->depthCompareOp;
+			if (cmp_idx >= 8) cmp_idx = 7; /* clamp to Always */
+			depth_stencil_state.format = depth_format;
+			depth_stencil_state.depthWriteEnabled =
+			    ds->depthWriteEnable ? 1 : 0;
+			depth_stencil_state.depthCompare = ds->depthTestEnable
+			    ? vk_compare_to_wgpu[cmp_idx]
+			    : WGPUCompareFunction_Always;
+			has_depth_stencil = VK_TRUE;
+		}
+
 		WGPURenderPipelineDescriptor desc = {
 		    .layout = info->layout ? info->layout->wgpu_layout : NULL,
 		    .vertex = vertex_state,
 		    .fragment = color_target_count > 0 ? &fragment_state : NULL,
 		    .primitive = primitive_state,
-		    .depthStencil = NULL,
+		    .depthStencil = has_depth_stencil ? &depth_stencil_state : NULL,
 		    .multisample =
 		        {
 		            .count = 1,
@@ -264,7 +330,7 @@ VkResult vkCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache
 		    .layout = info->layout ? info->layout->wgpu_layout : NULL,
 		    .compute =
 		        {
-		            .module = info->stage.module->wgpu_shader,
+		            .module = shader_module_for_stage(info->stage.module, WGVK_SPV_EXEC_MODEL_GL_COMPUTE),
 		            .entryPoint =
 		                (WGPUStringView){.data = info->stage.pName, .length = WGPU_STRLEN},
 		        },

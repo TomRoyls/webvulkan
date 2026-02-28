@@ -56,9 +56,9 @@ void vkCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDevi
 
 	if (commandBuffer->wgpu_render_pass) {
 		WGPUIndexFormat format = WGPUIndexFormat_Uint32;
-		if (indexType == 0) {
+		if (indexType == VK_INDEX_TYPE_UINT16) {
 			format = WGPUIndexFormat_Uint16;
-		} else if (indexType == 1) {
+		} else if (indexType == VK_INDEX_TYPE_UINT32) {
 			format = WGPUIndexFormat_Uint32;
 		}
 

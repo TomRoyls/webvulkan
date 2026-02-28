@@ -328,6 +328,10 @@ typedef struct {
 	const char *name;
 	uint32_t interface_count;
 	uint32_t interface_ids[32];
+	/* LocalSize from OpExecutionMode; default 1,1,1 for compute shaders. */
+	uint32_t local_size_x;
+	uint32_t local_size_y;
+	uint32_t local_size_z;
 } WgvkSpvEntryPoint;
 
 typedef struct {
