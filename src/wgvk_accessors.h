@@ -1,8 +1,8 @@
 #ifndef WGVK_ACCESSORS_H
 #define WGVK_ACCESSORS_H
 
-#include "vulkan_platform.h"
 #include <webgpu/webgpu.h>
+#include "vulkan_platform.h"
 
 #ifdef __cplusplus
 extern "C" {

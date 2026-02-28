@@ -1,6 +1,7 @@
 #include "spirv_parser.h"
 #include <stdlib.h>
 #include <string.h>
+#include "../util/log.h"
 
 static uint32_t read_word(WgvkSpvModule *module) {
 	if (module->cursor >= module->word_count)
@@ -50,6 +51,17 @@ static void skip_instruction(WgvkSpvModule *module, uint16_t word_count) {
 	module->cursor += word_count - 1;
 }
 
+/* Emit a one-shot warning when a fixed-size table overflows. */
+static void warn_table_full_once(int *warned, const char *table_name, int capacity) {
+	if (!*warned) {
+		*warned = 1;
+		WGVK_WARN(WGVK_LOG_CAT_SHADER,
+		          "SPIR-V %s table full (%d entries); "
+		          "additional entries will be silently ignored",
+		          table_name, capacity);
+	}
+}
+
 static void add_instruction_to_block(WgvkSpvModule *module, uint32_t opcode, uint32_t result_id,
                                      uint32_t result_type_id, uint32_t *operands,
                                      uint32_t operand_count) {
@@ -81,6 +93,12 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 	module->words = code;
 	module->word_count = word_count;
 	module->cursor = 0;
+
+	/* One-shot overflow warning flags — fired at most once per table per parse. */
+	int warned_types = 0;
+	int warned_constants = 0;
+	int warned_variables = 0;
+	int warned_decorations = 0;
 
 	uint32_t magic = read_word(module);
 	if (magic != WGVK_SPV_MAGIC)
@@ -128,6 +146,10 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 					ep->interface_ids[i] = read_word(module);
 				}
 			} else {
+				WGVK_WARN(WGVK_LOG_CAT_SHADER,
+				          "SPIR-V entry point table full (%d entries); "
+				          "additional entry points will be ignored",
+				          WGVK_MAX_ENTRY_POINTS);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -140,6 +162,9 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				d->decoration = read_word(module);
 				d->member = 0xFFFFFFFF;
 				d->value = (word_count >= 4) ? read_word(module) : 0;
+			} else if (module->decoration_count >= WGVK_MAX_DECORATIONS) {
+				warn_table_full_once(&warned_decorations, "decoration", WGVK_MAX_DECORATIONS);
+				skip_instruction(module, word_count);
 			} else {
 				skip_instruction(module, word_count);
 			}
@@ -153,6 +178,9 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				d->member = read_word(module);
 				d->decoration = read_word(module);
 				d->value = (word_count >= 5) ? read_word(module) : 0;
+			} else if (module->decoration_count >= WGVK_MAX_DECORATIONS) {
+				warn_table_full_once(&warned_decorations, "decoration", WGVK_MAX_DECORATIONS);
+				skip_instruction(module, word_count);
 			} else {
 				skip_instruction(module, word_count);
 			}
@@ -166,6 +194,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				t->id = read_word(module);
 				t->op = opcode;
 			} else {
+				if (module->type_count >= WGVK_MAX_TYPES)
+					warn_table_full_once(&warned_types, "type", WGVK_MAX_TYPES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -179,6 +209,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				t->width = read_word(module);
 				t->signedness = read_word(module);
 			} else {
+				if (module->type_count >= WGVK_MAX_TYPES)
+					warn_table_full_once(&warned_types, "type", WGVK_MAX_TYPES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -191,6 +223,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				t->op = opcode;
 				t->width = read_word(module);
 			} else {
+				if (module->type_count >= WGVK_MAX_TYPES)
+					warn_table_full_once(&warned_types, "type", WGVK_MAX_TYPES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -204,6 +238,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				t->element_type = read_word(module);
 				t->vector_size = read_word(module);
 			} else {
+				if (module->type_count >= WGVK_MAX_TYPES)
+					warn_table_full_once(&warned_types, "type", WGVK_MAX_TYPES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -217,6 +253,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				t->element_type = read_word(module);
 				t->matrix_cols = read_word(module);
 			} else {
+				if (module->type_count >= WGVK_MAX_TYPES)
+					warn_table_full_once(&warned_types, "type", WGVK_MAX_TYPES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -230,6 +268,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				t->element_type = read_word(module);
 				t->length = read_word(module);
 			} else {
+				if (module->type_count >= WGVK_MAX_TYPES)
+					warn_table_full_once(&warned_types, "type", WGVK_MAX_TYPES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -245,6 +285,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 					t->member_types[i] = read_word(module);
 				}
 			} else {
+				if (module->type_count >= WGVK_MAX_TYPES)
+					warn_table_full_once(&warned_types, "type", WGVK_MAX_TYPES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -258,6 +300,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				t->storage_class = read_word(module);
 				t->element_type = read_word(module);
 			} else {
+				if (module->type_count >= WGVK_MAX_TYPES)
+					warn_table_full_once(&warned_types, "type", WGVK_MAX_TYPES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -274,6 +318,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 					t->param_types[i] = read_word(module);
 				}
 			} else {
+				if (module->type_count >= WGVK_MAX_TYPES)
+					warn_table_full_once(&warned_types, "type", WGVK_MAX_TYPES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -287,6 +333,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				c->id = read_word(module);
 				c->value[0] = (opcode == WGVK_SPV_OP_CONSTANT_TRUE) ? 1 : 0;
 			} else {
+				if (module->constant_count >= WGVK_MAX_CONSTANTS)
+					warn_table_full_once(&warned_constants, "constant", WGVK_MAX_CONSTANTS);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -312,6 +360,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 					c->fvalue[0] = (float)d;
 				}
 			} else {
+				if (module->constant_count >= WGVK_MAX_CONSTANTS)
+					warn_table_full_once(&warned_constants, "constant", WGVK_MAX_CONSTANTS);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -327,6 +377,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 					c->component_ids[i] = read_word(module);
 				}
 			} else {
+				if (module->constant_count >= WGVK_MAX_CONSTANTS)
+					warn_table_full_once(&warned_constants, "constant", WGVK_MAX_CONSTANTS);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -335,10 +387,12 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 		case WGVK_SPV_OP_VARIABLE: {
 			if (module->variable_count < WGVK_MAX_VARIABLES && word_count >= 4) {
 				WgvkSpvVariable *v = &module->variables[module->variable_count++];
-                v->type_id       = read_word(module);
-                v->id            = read_word(module);
-                v->storage_class = read_word(module);
+				v->type_id = read_word(module);
+				v->id = read_word(module);
+				v->storage_class = read_word(module);
 			} else {
+				if (module->variable_count >= WGVK_MAX_VARIABLES)
+					warn_table_full_once(&warned_variables, "variable", WGVK_MAX_VARIABLES);
 				skip_instruction(module, word_count);
 			}
 			break;
@@ -347,21 +401,32 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 		case WGVK_SPV_OP_FUNCTION: {
 			if (word_count >= 5) {
 				if (module->function_count >= module->function_capacity) {
-					uint32_t new_cap = module->function_capacity ? module->function_capacity * 2 : 8;
-					WgvkSpvFunction **new_funcs = realloc(module->functions,
-					    new_cap * sizeof(WgvkSpvFunction *));
-					if (!new_funcs) { skip_instruction(module, word_count); break; }
+					uint32_t new_cap =
+					    module->function_capacity ? module->function_capacity * 2 : 8;
+					WgvkSpvFunction **new_funcs =
+					    realloc(module->functions, new_cap * sizeof(WgvkSpvFunction *));
+					if (!new_funcs) {
+						skip_instruction(module, word_count);
+						break;
+					}
 					module->functions = new_funcs;
 					module->function_capacity = new_cap;
 				}
 				WgvkSpvFunction *f = calloc(1, sizeof(WgvkSpvFunction));
-				if (!f) { skip_instruction(module, word_count); break; }
+				if (!f) {
+					skip_instruction(module, word_count);
+					break;
+				}
 				f->result_type_id = read_word(module);
 				f->id = read_word(module);
 				read_word(module);
 				read_word(module);
 				f->blocks = calloc(8, sizeof(WgvkSpvBlock));
-				if (!f->blocks) { free(f); skip_instruction(module, word_count); break; }
+				if (!f->blocks) {
+					free(f);
+					skip_instruction(module, word_count);
+					break;
+				}
 				f->block_capacity = 8;
 				f->block_count = 0;
 				f->current_block = 0;
@@ -383,12 +448,15 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 				WgvkSpvFunction *func = module->current_function;
 				if (func->block_count >= func->block_capacity) {
 					uint32_t new_cap = func->block_capacity * 2;
-					WgvkSpvBlock *new_blocks = realloc(func->blocks,
-					    new_cap * sizeof(WgvkSpvBlock));
-					if (!new_blocks) { skip_instruction(module, word_count); break; }
+					WgvkSpvBlock *new_blocks =
+					    realloc(func->blocks, new_cap * sizeof(WgvkSpvBlock));
+					if (!new_blocks) {
+						skip_instruction(module, word_count);
+						break;
+					}
 					/* Zero-init the new blocks */
 					memset(new_blocks + func->block_capacity, 0,
-					    (new_cap - func->block_capacity) * sizeof(WgvkSpvBlock));
+					       (new_cap - func->block_capacity) * sizeof(WgvkSpvBlock));
 					func->blocks = new_blocks;
 					func->block_capacity = new_cap;
 				}
@@ -577,7 +645,8 @@ int wgvk_spirv_parse(WgvkSpvModule *module, const uint32_t *code, size_t word_co
 }
 
 void wgvk_spirv_free(WgvkSpvModule *module) {
-	if (!module) return;
+	if (!module)
+		return;
 	for (uint32_t i = 0; i < module->function_count; i++) {
 		if (module->functions[i]) {
 			free(module->functions[i]->blocks);

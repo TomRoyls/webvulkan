@@ -94,6 +94,7 @@ else()
     add_library(webvulkan_native STATIC
         src/shaders/spirv_parser.c
         src/shaders/wgsl_gen.c
+        src/util/log.c
     )
     target_include_directories(webvulkan_native
         PUBLIC
