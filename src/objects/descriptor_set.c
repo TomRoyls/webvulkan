@@ -2,7 +2,7 @@
 
 static void destroy_descriptor_pool(void* obj) {
     VkDescriptorPool pool = (VkDescriptorPool)obj;
-    free(pool);
+    wgvk_free(pool);
 }
 
 VkResult vkCreateDescriptorPool(
@@ -47,7 +47,7 @@ static void destroy_descriptor_set(void* obj) {
     if (set->wgpu_bind_group) {
         wgpuBindGroupRelease(set->wgpu_bind_group);
     }
-    free(set);
+    wgvk_free(set);
 }
 
 VkResult vkAllocateDescriptorSets(
@@ -159,8 +159,10 @@ void vkUpdateDescriptorSets(
             memset(entry, 0, sizeof(*entry));
             entry->binding = binding + d;
             
-            if (desc_type == 6 || desc_type == 7 ||
-                desc_type == 8 || desc_type == 9) {
+            if (desc_type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ||
+                desc_type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER ||
+                desc_type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC ||
+                desc_type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC) {
                 buf_info = (const struct VkDescriptorBufferInfo_T*)writes[i].pBufferInfo + d;
                 if (buf_info && buf_info->buffer && buf_info->buffer->wgpu_buffer) {
                     entry->buffer = buf_info->buffer->wgpu_buffer;
@@ -170,13 +172,13 @@ void vkUpdateDescriptorSets(
                                     : buf_info->range;
                     set->entry_count++;
                 }
-            } else if (desc_type == 0) {
+            } else if (desc_type == VK_DESCRIPTOR_TYPE_SAMPLER) {
                 img_info = (const struct VkDescriptorImageInfo_T*)writes[i].pImageInfo + d;
                 if (img_info && img_info->sampler && img_info->sampler->wgpu_sampler) {
                     entry->sampler = img_info->sampler->wgpu_sampler;
                     set->entry_count++;
                 }
-            } else if (desc_type == 1 || desc_type == 2) {
+            } else if (desc_type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE || desc_type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER) {
                 img_info = (const struct VkDescriptorImageInfo_T*)writes[i].pImageInfo + d;
                 if (img_info && img_info->imageView && img_info->imageView->wgpu_view) {
                     entry->textureView = img_info->imageView->wgpu_view;

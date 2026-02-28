@@ -8,7 +8,7 @@ static void destroy_physical_device(void* obj) {
         wgpuAdapterRelease(phys_dev->wgpu_adapter);
     }
 #endif
-    free(phys_dev);
+    wgvk_free(phys_dev);
 }
 
 static void destroy_instance(void* obj) {
@@ -19,9 +19,9 @@ static void destroy_instance(void* obj) {
     if (instance->wgpu_instance) {
         wgpuInstanceRelease(instance->wgpu_instance);
     }
-    free(instance->application_name);
-    free(instance->engine_name);
-    free(instance);
+    wgvk_free(instance->application_name);
+    wgvk_free(instance->engine_name);
+    wgvk_free(instance);
 }
 
 VkResult vkCreateInstance(
@@ -42,7 +42,7 @@ VkResult vkCreateInstance(
     
     wgvk_object_init(&instance->base, destroy_instance);
     
-    instance->api_version = VK_API_VERSION_1_4;
+    instance->api_version = VK_API_VERSION_1_0;
     instance->application_name = NULL;
     instance->engine_name = NULL;
     instance->phys_dev = NULL;
@@ -62,7 +62,7 @@ VkResult vkCreateInstance(
     instance->wgpu_instance = wgpuCreateInstance(&desc);
     
     if (!instance->wgpu_instance) {
-        free(instance);
+        wgvk_free(instance);
         return VK_ERROR_INITIALIZATION_FAILED;
     }
     

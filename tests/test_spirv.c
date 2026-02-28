@@ -32,38 +32,77 @@ static void test_type_structures(void) {
     free(module);
 }
 
+/*
+ * Minimal SPIR-V for a vertex shader:
+ *   OpCapability Shader               ; word 0x00020011
+ *   OpMemoryModel Logical GLSL450      ; word 0x0003000E
+ *   OpEntryPoint Vertex %1 "main"      ; sets exec_model=0, entry_point_id=1, name="main"
+ *   OpTypeVoid %2                      ; type id=2
+ *   OpTypeFunction %3 %2               ; type id=3, return=2
+ *   OpFunction %2 %1 None %3           ; function id=1
+ *   OpLabel %4                         ; block label id=4
+ *   OpReturn                           ; terminates block
+ *   OpFunctionEnd                      ; ends function
+ */
 static void test_simple_vertex_shader(void) {
-    uint32_t vertex_spv[] = {
-        0x07230203,
-        0x00010000,
-        0,
-        7,
-        0,
+    static const uint32_t vertex_spv[] = {
+        /* Magic, Version, Generator, Bound, Schema */
+        0x07230203, 0x00010000, 0x00000000, 0x00000005, 0x00000000,
+        /* OpCapability Shader (word_count=2, opcode=17) */
+        0x00020011,  0x00000001,
+        /* OpMemoryModel Logical GLSL450 (word_count=3, opcode=14) */
+        0x0003000E,  0x00000000,  0x00000001,
+        /* OpEntryPoint Vertex %1 "main" (word_count=5, opcode=15): exec_model, id, "main"\0 pad */
+        0x0005000F,  0x00000000,  0x00000001,  0x6E69616D,  0x00000000,
+        /* OpTypeVoid %2 (word_count=2, opcode=19) */
+        0x00020013,  0x00000002,
+        /* OpTypeFunction %3 %2 (word_count=3, opcode=33) */
+        0x00030021,  0x00000003,  0x00000002,
+        /* OpFunction %2 %1 None %3 (word_count=5, opcode=54) */
+        0x00050036,  0x00000002,  0x00000001,  0x00000000,  0x00000003,
+        /* OpLabel %4 (word_count=2, opcode=248) */
+        0x000200F8,  0x00000004,
+        /* OpReturn (word_count=1, opcode=253) */
+        0x000100FD,
+        /* OpFunctionEnd (word_count=1, opcode=56) */
+        0x00010038,
     };
-    
+    const size_t word_count = sizeof(vertex_spv) / sizeof(uint32_t);
+
     WgvkSpvModule* module = calloc(1, sizeof(WgvkSpvModule));
     if (!module) { printf("[SKIP] test_simple_vertex_shader (OOM)\n"); return; }
-    
-    int result = wgvk_spirv_parse(module, vertex_spv, sizeof(vertex_spv) / sizeof(uint32_t));
-    
-    if (result == 0) {
-        WgvkWgslGenerator* gen = calloc(1, sizeof(WgvkWgslGenerator));
-        if (gen) {
-            int gen_result = wgvk_wgsl_init(gen, module, WGVK_SPV_EXEC_MODEL_VERTEX);
-            if (gen_result == 0) {
-                char* wgsl = wgvk_wgsl_generate(gen);
-                if (wgsl) {
-                    printf("Generated WGSL:\n%s\n", wgsl);
-                    free(wgsl);
-                }
-            }
-            free(gen);
+
+    int result = wgvk_spirv_parse(module, vertex_spv, word_count);
+    assert(result == 0 && "parse must succeed");
+    assert(module->entry_point_count == 1);
+    assert(module->entry_points[0].exec_model == WGVK_SPV_EXEC_MODEL_VERTEX);
+    assert(module->function_count == 1);
+    assert(module->functions[0]->block_count == 1);
+    assert(module->functions[0]->blocks[0].label_id == 4);
+
+    /* Verify the return instruction was captured in the block */
+    int found_return = 0;
+    WgvkSpvBlock* blk = &module->functions[0]->blocks[0];
+    for (uint32_t i = 0; i < blk->instruction_count; i++) {
+        if (blk->instructions[i].opcode == WGVK_SPV_OP_RETURN) {
+            found_return = 1;
+            break;
         }
-        wgvk_spirv_free(module);
     }
-    
-    printf("[PASS] test_simple_vertex_shader\n");
+    assert(found_return && "OpReturn must be recorded in the block");
+
+    /* Verify WGSL generation produces non-empty output */
+    WgvkWgslGenerator gen = {0};
+    int gen_result = wgvk_wgsl_init(&gen, module, WGVK_SPV_EXEC_MODEL_VERTEX);
+    assert(gen_result == 0);
+    char* wgsl = wgvk_wgsl_generate(&gen);
+    assert(wgsl != NULL && strlen(wgsl) > 0 && "WGSL output must be non-empty");
+    free(wgsl);
+    wgvk_wgsl_free(&gen);
+    wgvk_spirv_free(module);
     free(module);
+
+    printf("[PASS] test_simple_vertex_shader\n");
 }
 
 static void test_get_type(void) {

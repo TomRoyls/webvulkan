@@ -3,10 +3,12 @@ project(webvulkan VERSION 0.1.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(WEBVULKAN_BUILD_SAMPLES "Build sample applications" ON)
 option(WEBVULKAN_BUILD_TESTS "Build tests" ON)
 option(WEBVULKAN_WASM "Build for WebAssembly" OFF)
+option(WEBVULKAN_SANITIZE "Enable AddressSanitizer + UBSan (non-WASM only)" OFF)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -80,10 +82,33 @@ if(WEBVULKAN_WASM)
         VK_USE_PLATFORM_EMSCRIPTEN
     )
 
+    target_compile_options(webvulkan PRIVATE
+        -Wall -Wextra -Wpedantic
+    )
+
     if(WEBVULKAN_BUILD_SAMPLES)
         add_subdirectory(samples)
     endif()
 else()
+    # Build a native library with the shader pipeline only (no WebGPU dependency)
+    add_library(webvulkan_native STATIC
+        src/shaders/spirv_parser.c
+        src/shaders/wgsl_gen.c
+    )
+    target_include_directories(webvulkan_native
+        PUBLIC
+            ${VULKAN_HEADERS_DIR}
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
+    target_compile_options(webvulkan_native PRIVATE
+        -Wall -Wextra -Wpedantic
+    )
+    if(WEBVULKAN_SANITIZE)
+        target_compile_options(webvulkan_native PRIVATE -fsanitize=address,undefined)
+        target_link_options(webvulkan_native PUBLIC -fsanitize=address,undefined)
+    endif()
+
     if(WEBVULKAN_BUILD_TESTS)
         add_subdirectory(tests)
     endif()

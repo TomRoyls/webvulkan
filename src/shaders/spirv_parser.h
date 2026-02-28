@@ -229,7 +229,7 @@ typedef enum {
     WGVK_SPV_DECORATION_OFFSET = 35,
     WGVK_SPV_DECORATION_ARRAY_STRIDE = 44,
     WGVK_SPV_DECORATION_MATRIX_STRIDE = 46,
-    WGVK_SPV_DECORATION_NON_WRITABLE = 34,
+    WGVK_SPV_DECORATION_NON_WRITABLE = 24,
     WGVK_SPV_DECORATION_COL_MAJOR = 41,
     WGVK_SPV_DECORATION_ROW_MAJOR = 42,
 } WgvkSpvDecoration;
@@ -348,8 +348,9 @@ typedef struct {
     uint32_t id;
     uint32_t result_type_id;
     const char* name;
-    WgvkSpvBlock blocks[WGVK_MAX_BLOCKS];
+    WgvkSpvBlock* blocks;
     uint32_t block_count;
+    uint32_t block_capacity;
     uint32_t current_block;
 } WgvkSpvFunction;
 
@@ -373,15 +374,16 @@ typedef struct {
     WgvkSpvEntryPoint entry_points[WGVK_MAX_ENTRY_POINTS];
     uint32_t entry_point_count;
 
-    WgvkSpvFunction functions[64];
+    WgvkSpvFunction** functions;
     uint32_t function_count;
+    uint32_t function_capacity;
     WgvkSpvFunction* current_function;
     
     char string_buffer[16384];
     size_t string_cursor;
 } WgvkSpvModule;
 
-int wgvk_spirv_parse(WgvkSpvModule* module, const uint32_t* code, size_t size);
+int wgvk_spirv_parse(WgvkSpvModule* module, const uint32_t* code, size_t word_count);
 void wgvk_spirv_free(WgvkSpvModule* module);
 WgvkSpvType* wgvk_spirv_get_type(WgvkSpvModule* module, uint32_t id);
 WgvkSpvConstant* wgvk_spirv_get_constant(WgvkSpvModule* module, uint32_t id);

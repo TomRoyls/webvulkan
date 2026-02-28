@@ -5,7 +5,7 @@ static void destroy_buffer(void* obj) {
     if (buffer->wgpu_buffer) {
         wgpuBufferRelease(buffer->wgpu_buffer);
     }
-    free(buffer);
+    wgvk_free(buffer);
 }
 
 VkResult vkCreateBuffer(
@@ -34,13 +34,13 @@ VkResult vkCreateBuffer(
     buffer->wgpu_buffer = NULL;
     
     WGPUBufferUsage wgpu_usage = WGPUBufferUsage_None;
-    if (pCreateInfo->usage & 0x00000001) wgpu_usage |= WGPUBufferUsage_Vertex;
-    if (pCreateInfo->usage & 0x00000002) wgpu_usage |= WGPUBufferUsage_Index;
-    if (pCreateInfo->usage & 0x00000004) wgpu_usage |= WGPUBufferUsage_Uniform;
-    if (pCreateInfo->usage & 0x00000008) wgpu_usage |= WGPUBufferUsage_Storage;
-    if (pCreateInfo->usage & 0x00001000) wgpu_usage |= WGPUBufferUsage_CopySrc;
-    if (pCreateInfo->usage & 0x00002000) wgpu_usage |= WGPUBufferUsage_CopyDst;
-    if (pCreateInfo->usage & 0x00000010) wgpu_usage |= WGPUBufferUsage_Indirect;
+    if (pCreateInfo->usage & VK_BUFFER_USAGE_VERTEX_BUFFER_BIT)   wgpu_usage |= WGPUBufferUsage_Vertex;
+    if (pCreateInfo->usage & VK_BUFFER_USAGE_INDEX_BUFFER_BIT)    wgpu_usage |= WGPUBufferUsage_Index;
+    if (pCreateInfo->usage & VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)  wgpu_usage |= WGPUBufferUsage_Uniform;
+    if (pCreateInfo->usage & VK_BUFFER_USAGE_STORAGE_BUFFER_BIT)  wgpu_usage |= WGPUBufferUsage_Storage;
+    if (pCreateInfo->usage & VK_BUFFER_USAGE_TRANSFER_SRC_BIT)    wgpu_usage |= WGPUBufferUsage_CopySrc;
+    if (pCreateInfo->usage & VK_BUFFER_USAGE_TRANSFER_DST_BIT)    wgpu_usage |= WGPUBufferUsage_CopyDst;
+    if (pCreateInfo->usage & VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT) wgpu_usage |= WGPUBufferUsage_Indirect;
     
     WGPUBufferDescriptor desc = {
         .size = pCreateInfo->size,
@@ -50,7 +50,7 @@ VkResult vkCreateBuffer(
     
     buffer->wgpu_buffer = wgpuDeviceCreateBuffer(device->wgpu_device, &desc);
     if (!buffer->wgpu_buffer) {
-        free(buffer);
+        wgvk_free(buffer);
         return VK_ERROR_OUT_OF_DEVICE_MEMORY;
     }
     

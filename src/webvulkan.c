@@ -37,7 +37,7 @@ WgvkResult wgvkCompileShaders(
             continue;
         }
         
-        int parse_result = wgvk_spirv_parse(module, info->spirvCode, info->spirvSize);
+        int parse_result = wgvk_spirv_parse(module, info->spirvCode, info->spirvSize / 4);
         if (parse_result != 0) {
             free(module);
             ppWgslOutputs[i] = NULL;

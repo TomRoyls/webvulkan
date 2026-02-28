@@ -5,7 +5,7 @@ static void destroy_image(void* obj) {
     if (image->wgpu_texture) {
         wgpuTextureRelease(image->wgpu_texture);
     }
-    free(image);
+    wgvk_free(image);
 }
 
 static WGPUTextureDimension image_type_to_dimension(uint32_t image_type) {
@@ -110,12 +110,12 @@ VkResult vkCreateImage(
     /* Vulkan: TRANSFER_SRC=1, TRANSFER_DST=2, SAMPLED=4, STORAGE=8, COLOR_ATTACH=16, DEPTH_STENCIL=32 */
     /* WebGPU: CopySrc=1, CopyDst=2, TextureBinding=4, StorageBinding=8, RenderAttachment=16 */
     WGPUTextureUsage wgpu_usage = WGPUTextureUsage_None;
-    if (pCreateInfo->usage & 0x00000001) wgpu_usage |= WGPUTextureUsage_CopySrc;
-    if (pCreateInfo->usage & 0x00000002) wgpu_usage |= WGPUTextureUsage_CopyDst;
-    if (pCreateInfo->usage & 0x00000004) wgpu_usage |= WGPUTextureUsage_TextureBinding;
-    if (pCreateInfo->usage & 0x00000008) wgpu_usage |= WGPUTextureUsage_StorageBinding;
-    if (pCreateInfo->usage & 0x00000010) wgpu_usage |= WGPUTextureUsage_RenderAttachment;
-    if (pCreateInfo->usage & 0x00000020) wgpu_usage |= WGPUTextureUsage_RenderAttachment; /* depth/stencil */
+    if (pCreateInfo->usage & VK_IMAGE_USAGE_TRANSFER_SRC_BIT)       wgpu_usage |= WGPUTextureUsage_CopySrc;
+    if (pCreateInfo->usage & VK_IMAGE_USAGE_TRANSFER_DST_BIT)       wgpu_usage |= WGPUTextureUsage_CopyDst;
+    if (pCreateInfo->usage & VK_IMAGE_USAGE_SAMPLED_BIT)            wgpu_usage |= WGPUTextureUsage_TextureBinding;
+    if (pCreateInfo->usage & VK_IMAGE_USAGE_STORAGE_BIT)            wgpu_usage |= WGPUTextureUsage_StorageBinding;
+    if (pCreateInfo->usage & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)   wgpu_usage |= WGPUTextureUsage_RenderAttachment;
+    if (pCreateInfo->usage & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) wgpu_usage |= WGPUTextureUsage_RenderAttachment;
     
     WGPUExtent3D size = {
         .width = pCreateInfo->extent.width,
@@ -136,7 +136,7 @@ VkResult vkCreateImage(
     
     image->wgpu_texture = wgpuDeviceCreateTexture(device->wgpu_device, &desc);
     if (!image->wgpu_texture) {
-        free(image);
+        wgvk_free(image);
         return VK_ERROR_OUT_OF_DEVICE_MEMORY;
     }
     

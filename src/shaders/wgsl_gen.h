@@ -5,11 +5,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define WGVK_WGSL_BUFFER_SIZE 65536
-
 typedef struct {
-    char buffer[WGVK_WGSL_BUFFER_SIZE];
+    char* buffer;
     size_t cursor;
+    size_t capacity;
     WgvkSpvModule* module;
     uint32_t entry_point_id;
     int exec_model;

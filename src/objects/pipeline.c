@@ -11,7 +11,7 @@ static void destroy_pipeline(void* obj) {
             wgpuComputePipelineRelease(pipeline->wgpu_pipeline.compute);
         }
     }
-    free(pipeline);
+    wgvk_free(pipeline);
 }
 
 static WGPUVertexFormat vk_format_to_wgpu(uint32_t vk_format) {
@@ -160,12 +160,12 @@ VkResult vkCreateGraphicsPipelines(
         
         if (info->pInputAssemblyState) {
             switch (info->pInputAssemblyState->topology) {
-                case 0: primitive_state.topology = WGPUPrimitiveTopology_PointList; break;
-                case 1: primitive_state.topology = WGPUPrimitiveTopology_LineList; break;
-                case 2: primitive_state.topology = WGPUPrimitiveTopology_LineStrip; break;
-                case 3: primitive_state.topology = WGPUPrimitiveTopology_TriangleList; break;
-                case 4: primitive_state.topology = WGPUPrimitiveTopology_TriangleStrip; break;
-                default: primitive_state.topology = WGPUPrimitiveTopology_TriangleList; break;
+                case VK_PRIMITIVE_TOPOLOGY_POINT_LIST:     primitive_state.topology = WGPUPrimitiveTopology_PointList; break;
+                case VK_PRIMITIVE_TOPOLOGY_LINE_LIST:      primitive_state.topology = WGPUPrimitiveTopology_LineList; break;
+                case VK_PRIMITIVE_TOPOLOGY_LINE_STRIP:     primitive_state.topology = WGPUPrimitiveTopology_LineStrip; break;
+                case VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST:  primitive_state.topology = WGPUPrimitiveTopology_TriangleList; break;
+                case VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP: primitive_state.topology = WGPUPrimitiveTopology_TriangleStrip; break;
+                default:                                    primitive_state.topology = WGPUPrimitiveTopology_TriangleList; break;
             }
         }
         
@@ -188,7 +188,7 @@ VkResult vkCreateGraphicsPipelines(
         if (all_attributes) wgvk_free(all_attributes);
         
         if (!pipeline->wgpu_pipeline.render) {
-            free(pipeline);
+            wgvk_free(pipeline);
             for (uint32_t j = 0; j < i; j++) {
                 wgvk_object_release(&pPipelines[j]->base);
             }
@@ -243,7 +243,7 @@ VkResult vkCreateComputePipelines(
         
         pipeline->wgpu_pipeline.compute = wgpuDeviceCreateComputePipeline(device->wgpu_device, &desc);
         if (!pipeline->wgpu_pipeline.compute) {
-            free(pipeline);
+            wgvk_free(pipeline);
             for (uint32_t j = 0; j < i; j++) {
                 wgvk_object_release(&pPipelines[j]->base);
             }

@@ -2,7 +2,7 @@
 
 static void destroy_semaphore(void* obj) {
     VkSemaphore semaphore = (VkSemaphore)obj;
-    free(semaphore);
+    wgvk_free(semaphore);
 }
 
 VkResult vkCreateSemaphore(

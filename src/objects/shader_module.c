@@ -10,12 +10,12 @@ static void destroy_shader_module(void* obj) {
         wgpuShaderModuleRelease(module->wgpu_shader);
     }
     if (module->wgsl_source) {
-        free(module->wgsl_source);
+        wgvk_free(module->wgsl_source);
     }
     if (module->spirv_code) {
-        free(module->spirv_code);
+        wgvk_free(module->spirv_code);
     }
-    free(module);
+    wgvk_free(module);
 }
 
 static VkBool32 is_wgsl_source(const uint32_t* code, size_t size) {
@@ -52,7 +52,7 @@ VkResult vkCreateShaderModule(
             size_t wgsl_len = pCreateInfo->codeSize;
             module->wgsl_source = wgvk_alloc(wgsl_len + 1);
             if (!module->wgsl_source) {
-                free(module);
+                wgvk_free(module);
                 return VK_ERROR_OUT_OF_HOST_MEMORY;
             }
             memcpy(module->wgsl_source, pCreateInfo->pCode, wgsl_len);
@@ -60,14 +60,14 @@ VkResult vkCreateShaderModule(
         } else {
             module->spirv_code = wgvk_alloc(pCreateInfo->codeSize);
             if (!module->spirv_code) {
-                free(module);
+                wgvk_free(module);
                 return VK_ERROR_OUT_OF_HOST_MEMORY;
             }
             memcpy(module->spirv_code, pCreateInfo->pCode, pCreateInfo->codeSize);
             module->spirv_size = pCreateInfo->codeSize;
             
             WgvkSpvModule spv_module = {0};
-            if (wgvk_spirv_parse(&spv_module, pCreateInfo->pCode, pCreateInfo->codeSize) == 0) {
+            if (wgvk_spirv_parse(&spv_module, pCreateInfo->pCode, pCreateInfo->codeSize / 4) == 0) {
                 WgvkWgslGenerator gen = {0};
                 uint32_t exec_model = WGVK_SPV_EXEC_MODEL_VERTEX;
                 for (uint32_t i = 0; i < spv_module.entry_point_count; i++) {
@@ -103,9 +103,9 @@ VkResult vkCreateShaderModule(
         
         module->wgpu_shader = wgpuDeviceCreateShaderModule(device->wgpu_device, &desc);
         if (!module->wgpu_shader) {
-            free(module->wgsl_source);
-            free(module->spirv_code);
-            free(module);
+            wgvk_free(module->wgsl_source);
+            wgvk_free(module->spirv_code);
+            wgvk_free(module);
             return VK_ERROR_OUT_OF_DEVICE_MEMORY;
         }
     }

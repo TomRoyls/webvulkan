@@ -2,7 +2,7 @@
 
 static void destroy_render_pass(void* obj) {
     VkRenderPass pass = (VkRenderPass)obj;
-    free(pass);
+    wgvk_free(pass);
 }
 
 VkResult vkCreateRenderPass(

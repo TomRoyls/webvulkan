@@ -5,7 +5,7 @@ static void destroy_command_buffer(void* obj) {
     if (cmd->wgpu_encoder) {
         wgpuCommandEncoderRelease(cmd->wgpu_encoder);
     }
-    free(cmd);
+    wgvk_free(cmd);
 }
 
 VkResult vkAllocateCommandBuffers(
@@ -104,8 +104,11 @@ VkResult vkBeginCommandBuffer(
 VkResult vkEndCommandBuffer(
     VkCommandBuffer commandBuffer)
 {
-    if (!commandBuffer || !commandBuffer->recording) {
+    if (!commandBuffer) {
         return VK_ERROR_INITIALIZATION_FAILED;
+    }
+    if (!commandBuffer->recording) {
+        return VK_NOT_READY;
     }
     
     if (commandBuffer->in_render_pass) {

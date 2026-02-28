@@ -4,15 +4,33 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-static void emit(WgvkWgslGenerator* gen, const char* fmt, ...) {
+static int emit(WgvkWgslGenerator* gen, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    size_t remaining = WGVK_WGSL_BUFFER_SIZE - gen->cursor;
-    int written = vsnprintf(gen->buffer + gen->cursor, remaining, fmt, args);
+    /* Measure how many bytes are needed */
+    va_list args2;
+    va_copy(args2, args);
+    int needed = vsnprintf(NULL, 0, fmt, args2);
+    va_end(args2);
     va_end(args);
-    if (written > 0 && (size_t)written < remaining) {
-        gen->cursor += written;
+    if (needed <= 0) return 0;
+
+    size_t required = gen->cursor + (size_t)needed + 1;
+    if (required > gen->capacity) {
+        size_t new_cap = gen->capacity ? gen->capacity * 2 : 65536;
+        while (new_cap < required) new_cap *= 2;
+        char *new_buf = realloc(gen->buffer, new_cap);
+        if (!new_buf) return -1;
+        gen->buffer = new_buf;
+        gen->capacity = new_cap;
     }
+
+    va_list args3;
+    va_start(args3, fmt);
+    int written = vsnprintf(gen->buffer + gen->cursor, gen->capacity - gen->cursor, fmt, args3);
+    va_end(args3);
+    if (written > 0) gen->cursor += (size_t)written;
+    return written;
 }
 
 static void emit_type(WgvkWgslGenerator* gen, WgvkSpvType* type);
@@ -300,7 +318,11 @@ static void emit_entry_function(WgvkWgslGenerator* gen) {
     emit(gen, "fn %s(", entry_name);
 
     if (has_input_struct) {
-        emit(gen, "in: VertexInput");
+        if (exec_model == WGVK_SPV_EXEC_MODEL_FRAGMENT) {
+            emit(gen, "in: FragInput");
+        } else {
+            emit(gen, "in: VertexInput");
+        }
     } else if (exec_model == WGVK_SPV_EXEC_MODEL_GL_COMPUTE) {
         emit(gen, "@builtin(global_invocation_id) global_id: vec3<u32>");
     }
@@ -512,5 +534,9 @@ char* wgvk_wgsl_generate(WgvkWgslGenerator* gen) {
 }
 
 void wgvk_wgsl_free(WgvkWgslGenerator* gen) {
-    (void)gen;
+    if (!gen) return;
+    free(gen->buffer);
+    gen->buffer = NULL;
+    gen->cursor = 0;
+    gen->capacity = 0;
 }

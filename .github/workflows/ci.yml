@@ -51,9 +51,14 @@ jobs:
           retention-days: 7
 
   test-native:
-    name: Test (Native)
-    runs-on: ubuntu-latest
-    
+    name: Test (Native, ${{ matrix.os }}, ${{ matrix.compiler }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        compiler: [gcc, clang]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -62,12 +67,13 @@ jobs:
         run: |
           cmake -B build-native \
             -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_COMPILER=${{ matrix.compiler }} \
             -DWEBVULKAN_WASM=OFF \
             -DWEBVULKAN_BUILD_TESTS=ON \
             -DWEBVULKAN_BUILD_SAMPLES=OFF
 
       - name: Build (Native)
-        run: cmake --build build-native --config Debug --parallel $(nproc)
+        run: cmake --build build-native --config Debug --parallel $(nproc 2>/dev/null || sysctl -n hw.ncpu)
 
       - name: Run tests
         working-directory: build-native
