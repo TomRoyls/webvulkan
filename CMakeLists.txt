@@ -72,7 +72,7 @@ if(WEBVULKAN_WASM)
 
     target_include_directories(webvulkan
         PUBLIC
-            ${VULKAN_HEADERS_DIR}
+            $<BUILD_INTERFACE:${VULKAN_HEADERS_DIR}>
         PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
@@ -97,7 +97,7 @@ else()
     )
     target_include_directories(webvulkan_native
         PUBLIC
-            ${VULKAN_HEADERS_DIR}
+            $<BUILD_INTERFACE:${VULKAN_HEADERS_DIR}>
         PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
