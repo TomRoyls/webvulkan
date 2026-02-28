@@ -36,17 +36,7 @@ VkResult vkCreateRenderPass(
     if (pCreateInfo && pCreateInfo->pAttachments) {
         pass->attachment_count = pCreateInfo->attachmentCount;
         
-        struct VkAttachmentDescription {
-            uint32_t flags;
-            uint32_t format;
-            uint32_t samples;
-            uint32_t loadOp;
-            uint32_t storeOp;
-            uint32_t stencilLoadOp;
-            uint32_t stencilStoreOp;
-            uint32_t initialLayout;
-            uint32_t finalLayout;
-        } const* attachments = pCreateInfo->pAttachments;
+        const VkAttachmentDescription* attachments = pCreateInfo->pAttachments;
         
         uint32_t color_idx = 0;
         for (uint32_t i = 0; i < pCreateInfo->attachmentCount; i++) {
