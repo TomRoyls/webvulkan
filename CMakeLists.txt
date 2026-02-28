@@ -28,60 +28,105 @@ if(WEBVULKAN_WASM)
     add_link_options(--use-port=emdawnwebgpu -sALLOW_MEMORY_GROWTH=1 -sENVIRONMENT=web)
 endif()
 
-add_library(webvulkan
-    src/core/instance.c
-    src/core/device.c
-    src/core/physical_device.c
-    src/core/queue.c
-    src/objects/buffer.c
-    src/objects/image.c
-    src/objects/image_view.c
-    src/objects/render_pass.c
-    src/objects/framebuffer.c
-    src/objects/pipeline.c
-    src/objects/pipeline_layout.c
-    src/objects/shader_module.c
-    src/objects/descriptor_set.c
-    src/objects/descriptor_set_layout.c
-    src/objects/sampler.c
-    src/objects/command_pool.c
-    src/objects/command_buffer.c
-    src/objects/semaphore.c
-    src/objects/fence.c
-    src/objects/event.c
+if(WEBVULKAN_WASM)
+    add_library(webvulkan
+        src/core/instance.c
+        src/core/device.c
+        src/core/physical_device.c
+        src/core/queue.c
+        src/objects/buffer.c
+        src/objects/image.c
+        src/objects/image_view.c
+        src/objects/render_pass.c
+        src/objects/framebuffer.c
+        src/objects/pipeline.c
+        src/objects/pipeline_layout.c
+        src/objects/shader_module.c
+        src/objects/descriptor_set.c
+        src/objects/descriptor_set_layout.c
+        src/objects/sampler.c
+        src/objects/command_pool.c
+        src/objects/command_buffer.c
+        src/objects/semaphore.c
+        src/objects/fence.c
+        src/objects/event.c
 
-    src/commands/draw.c
-    src/commands/compute.c
-    src/commands/copy.c
-    src/commands/sync.c
-    src/commands/render_pass.c
-    src/commands/subpass.c
-    src/shaders/spirv_parser.c
-    src/shaders/wgsl_gen.c
-    src/sync/barrier.c
-    src/sync/push_constants.c
-    src/memory/device_memory.c
+        src/commands/draw.c
+        src/commands/compute.c
+        src/commands/copy.c
+        src/commands/sync.c
+        src/commands/render_pass.c
+        src/commands/subpass.c
+        src/shaders/spirv_parser.c
+        src/shaders/wgsl_gen.c
+        src/sync/barrier.c
+        src/sync/push_constants.c
+        src/memory/device_memory.c
 
-    src/util/list.c
-    src/util/hash_table.c
-)
+        src/util/list.c
+        src/util/hash_table.c
+        src/util/log.c
+    )
 
-target_include_directories(webvulkan
-    PUBLIC
-        ${VULKAN_HEADERS_DIR}
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
+    target_include_directories(webvulkan
+        PUBLIC
+            ${VULKAN_HEADERS_DIR}
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
 
-target_compile_definitions(webvulkan PRIVATE
-    VK_NO_PROTOTYPES
-    VK_USE_PLATFORM_EMSCRIPTEN
-)
+    target_compile_definitions(webvulkan PRIVATE
+        VK_NO_PROTOTYPES
+        VK_USE_PLATFORM_EMSCRIPTEN
+    )
 
-if(WEBVULKAN_BUILD_SAMPLES)
-    add_subdirectory(samples)
+    if(WEBVULKAN_BUILD_SAMPLES)
+        add_subdirectory(samples)
+    endif()
+else()
+    if(WEBVULKAN_BUILD_TESTS)
+        add_subdirectory(tests)
+    endif()
 endif()
 
-if(WEBVULKAN_BUILD_TESTS AND NOT WEBVULKAN_WASM)
-    add_subdirectory(tests)
+include(GNUInstallDirs)
+
+install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/webvulkan.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/webgpu/webgpu.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+if(WEBVULKAN_WASM)
+    install(TARGETS webvulkan
+        EXPORT webvulkanTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+
+    install(EXPORT webvulkanTargets
+        FILE webvulkanTargets.cmake
+        NAMESPACE webvulkan::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/webvulkan
+    )
+
+    include(CMakePackageConfigHelpers)
+    configure_package_config_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/webvulkanConfig.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/webvulkanConfig.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/webvulkan
+    )
+
+    write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/webvulkanConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
+
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/webvulkanConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/webvulkanConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/webvulkan
+    )
 endif()

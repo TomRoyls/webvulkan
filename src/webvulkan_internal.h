@@ -150,6 +150,7 @@ struct VkRenderPass_T {
     uint32_t attachment_count;
     uint32_t color_formats[WGVK_MAX_COLOR_ATTACHMENTS];
     uint32_t depth_stencil_format;
+    uint32_t depth_stencil_index;
     uint32_t sample_count;
 };
 
@@ -198,12 +199,7 @@ struct VkSemaphore_T {
     VkDevice device;
     uint64_t value;
     VkBool32 signaled;
-};
-
-struct VkFence_T {
-    struct WgvkObject base;
-    VkDevice device;
-    VkBool32 signaled;
+    VkBool32 timeline;
 };
 
 struct VkEvent_T {

@@ -31,8 +31,14 @@ void vkCmdBeginRenderPass(
     
     if (begin_info->framebuffer) {
         VkFramebuffer fb = begin_info->framebuffer;
+        VkRenderPass rp = begin_info->renderPass;
         
-        for (uint32_t i = 0; i < fb->attachment_count && i < WGVK_MAX_COLOR_ATTACHMENTS; i++) {
+        uint32_t color_attach_count = fb->attachment_count;
+        if (rp && rp->depth_stencil_format != 0) {
+            color_attach_count = fb->attachment_count > 0 ? fb->attachment_count - 1 : 0;
+        }
+        
+        for (uint32_t i = 0; i < color_attach_count && i < WGVK_MAX_COLOR_ATTACHMENTS; i++) {
             VkImageView view = fb->attachments[i];
             if (view && view->wgpu_view) {
                 color_attachments[color_count].view = view->wgpu_view;
@@ -40,6 +46,22 @@ void vkCmdBeginRenderPass(
                 color_attachments[color_count].storeOp = WGPUStoreOp_Store;
                 color_attachments[color_count].clearValue = (WGPUColor){ 0.0f, 0.0f, 0.0f, 1.0f };
                 color_count++;
+            }
+        }
+        
+        if (rp && rp->depth_stencil_format != 0 &&
+            rp->depth_stencil_index != UINT32_MAX &&
+            rp->depth_stencil_index < fb->attachment_count) {
+            VkImageView depth_view = fb->attachments[rp->depth_stencil_index];
+            if (depth_view && depth_view->wgpu_view) {
+                depth_attachment.view = depth_view->wgpu_view;
+                depth_attachment.depthLoadOp = WGPULoadOp_Clear;
+                depth_attachment.depthStoreOp = WGPUStoreOp_Store;
+                depth_attachment.depthClearValue = 1.0f;
+                depth_attachment.stencilLoadOp = WGPULoadOp_Clear;
+                depth_attachment.stencilStoreOp = WGPUStoreOp_Store;
+                depth_attachment.stencilClearValue = 0;
+                has_depth = VK_TRUE;
             }
         }
     }

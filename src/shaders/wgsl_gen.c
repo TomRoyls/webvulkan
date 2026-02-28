@@ -251,6 +251,24 @@ static void emit_io_struct(WgvkWgslGenerator* gen, const char* name,
     emit(gen, "};\n\n");
 }
 
+static void emit_local_variables(WgvkWgslGenerator* gen) {
+    WgvkSpvModule* mod = gen->module;
+    
+    for (uint32_t i = 0; i < mod->variable_count; i++) {
+        WgvkSpvVariable* var = &mod->variables[i];
+        if (var->storage_class != WGVK_SPV_STORAGE_CLASS_FUNCTION) continue;
+        
+        WgvkSpvType* ptr_type = wgvk_spirv_get_type(mod, var->type_id);
+        WgvkSpvType* var_type = ptr_type ? wgvk_spirv_get_type(mod, ptr_type->element_type) : NULL;
+        
+        emit(gen, "    var v%u: ", var->id);
+        emit_type(gen, var_type);
+        emit(gen, ";\n");
+    }
+}
+
+static void emit_function_body(WgvkWgslGenerator* gen, WgvkSpvFunction* func);
+
 static void emit_entry_function(WgvkWgslGenerator* gen) {
     WgvkSpvModule* mod = gen->module;
     uint32_t exec_model = (uint32_t)gen->exec_model;
@@ -301,16 +319,155 @@ static void emit_entry_function(WgvkWgslGenerator* gen) {
 
     emit(gen, " {\n");
 
-    if (exec_model != WGVK_SPV_EXEC_MODEL_GL_COMPUTE) {
-        if (has_output_struct) {
-            emit(gen, "    var out: VertexOutput;\n");
-            emit(gen, "    return out;\n");
-        } else {
-            emit(gen, "    return vec4<f32>(0.0, 0.0, 0.0, 1.0);\n");
+    emit_local_variables(gen);
+
+    WgvkSpvFunction* entry_func = wgvk_spirv_get_function(mod, gen->entry_point_id);
+    if (entry_func && entry_func->block_count > 0) {
+        emit_function_body(gen, entry_func);
+    } else {
+        if (exec_model != WGVK_SPV_EXEC_MODEL_GL_COMPUTE) {
+            if (has_output_struct) {
+                emit(gen, "    var out: VertexOutput;\n");
+                emit(gen, "    return out;\n");
+            } else {
+                emit(gen, "    return vec4<f32>(0.0, 0.0, 0.0, 1.0);\n");
+            }
         }
     }
 
     emit(gen, "}\n");
+}
+
+static const char* opcode_to_wgsl(uint32_t opcode) {
+    switch (opcode) {
+        case WGVK_SPV_OP_FADD: return "+";
+        case WGVK_SPV_OP_FSUB: return "-";
+        case WGVK_SPV_OP_FMUL: return "*";
+        case WGVK_SPV_OP_FDIV: return "/";
+        case WGVK_SPV_OP_IADD: return "+";
+        case WGVK_SPV_OP_ISUB: return "-";
+        case WGVK_SPV_OP_IMUL: return "*";
+        case WGVK_SPV_OP_SDIV: return "/";
+        case WGVK_SPV_OP_UDIV: return "/";
+        case WGVK_SPV_OP_SNEGATE: return "-";
+        case WGVK_SPV_OP_FNEGATE: return "-";
+        case WGVK_SPV_OP_BITWISE_OR: return "|";
+        case WGVK_SPV_OP_BITWISE_XOR: return "^";
+        case WGVK_SPV_OP_BITWISE_AND: return "&";
+        case WGVK_SPV_OP_SHIFT_LEFT_LOGICAL: return "<<";
+        case WGVK_SPV_OP_SHIFT_RIGHT_LOGICAL: return ">>";
+        case WGVK_SPV_OP_LOGICAL_AND: return "&&";
+        case WGVK_SPV_OP_LOGICAL_OR: return "||";
+        case WGVK_SPV_OP_LOGICAL_EQUAL: return "==";
+        case WGVK_SPV_OP_LOGICAL_NOT_EQUAL: return "!=";
+        case WGVK_SPV_OP_F_ORD_EQUAL: return "==";
+        case WGVK_SPV_OP_F_ORD_NOT_EQUAL: return "!=";
+        case WGVK_SPV_OP_F_ORD_LESS_THAN: return "<";
+        case WGVK_SPV_OP_F_ORD_GREATER_THAN: return ">";
+        case WGVK_SPV_OP_F_ORD_LESS_THAN_EQUAL: return "<=";
+        case WGVK_SPV_OP_F_ORD_GREATER_THAN_EQUAL: return ">=";
+        default: return NULL;
+    }
+}
+
+static void emit_instruction(WgvkWgslGenerator* gen, WgvkSpvInstruction* inst) {
+    if (!inst) return;
+    
+    WgvkSpvModule* mod = gen->module;
+    const char* op = opcode_to_wgsl(inst->opcode);
+    
+    if (op && inst->result_id && inst->operand_count >= 2) {
+        WgvkSpvType* result_type = wgvk_spirv_get_type(mod, inst->result_type_id);
+        emit(gen, "    var v%u: ", inst->result_id);
+        emit_type(gen, result_type);
+        if (inst->opcode == WGVK_SPV_OP_FNEGATE || inst->opcode == WGVK_SPV_OP_SNEGATE ||
+            inst->opcode == WGVK_SPV_OP_LOGICAL_NOT || inst->opcode == WGVK_SPV_OP_NOT) {
+            emit(gen, " = %sv%u;\n", op, inst->operands[0]);
+        } else {
+            emit(gen, " = v%u %s v%u;\n", inst->operands[0], op, inst->operands[1]);
+        }
+        return;
+    }
+    
+    switch (inst->opcode) {
+        case WGVK_SPV_OP_LOAD: {
+            if (inst->result_id && inst->operand_count >= 1) {
+                WgvkSpvType* result_type = wgvk_spirv_get_type(mod, inst->result_type_id);
+                emit(gen, "    let v%u: ", inst->result_id);
+                emit_type(gen, result_type);
+                emit(gen, " = v%u;\n", inst->operands[0]);
+            }
+            break;
+        }
+        case WGVK_SPV_OP_STORE: {
+            if (inst->operand_count >= 2) {
+                emit(gen, "    v%u = v%u;\n", inst->operands[0], inst->operands[1]);
+            }
+            break;
+        }
+        case WGVK_SPV_OP_ACCESS_CHAIN: {
+            if (inst->result_id && inst->operand_count >= 2) {
+                WgvkSpvType* result_type = wgvk_spirv_get_type(mod, inst->result_type_id);
+                emit(gen, "    let v%u: ", inst->result_id);
+                emit_type(gen, result_type);
+                emit(gen, " = &v%u[", inst->operands[0]);
+                for (uint32_t i = 1; i < inst->operand_count; i++) {
+                    if (i > 1) emit(gen, "][");
+                    emit(gen, "v%u", inst->operands[i]);
+                }
+                emit(gen, "];\n");
+            }
+            break;
+        }
+        case WGVK_SPV_OP_COMPOSITE_EXTRACT: {
+            if (inst->result_id && inst->operand_count >= 2) {
+                WgvkSpvType* result_type = wgvk_spirv_get_type(mod, inst->result_type_id);
+                emit(gen, "    let v%u: ", inst->result_id);
+                emit_type(gen, result_type);
+                emit(gen, " = v%u", inst->operands[0]);
+                for (uint32_t i = 1; i < inst->operand_count; i++) {
+                    emit(gen, "[%u]", inst->operands[i]);
+                }
+                emit(gen, ";\n");
+            }
+            break;
+        }
+        case WGVK_SPV_OP_DOT: {
+            if (inst->result_id && inst->operand_count >= 2) {
+                WgvkSpvType* result_type = wgvk_spirv_get_type(mod, inst->result_type_id);
+                emit(gen, "    let v%u: ", inst->result_id);
+                emit_type(gen, result_type);
+                emit(gen, " = dot(v%u, v%u);\n", inst->operands[0], inst->operands[1]);
+            }
+            break;
+        }
+        case WGVK_SPV_OP_RETURN: {
+            emit(gen, "    return;\n");
+            break;
+        }
+        case WGVK_SPV_OP_RETURN_VALUE: {
+            if (inst->operand_count >= 1) {
+                emit(gen, "    return v%u;\n", inst->operands[0]);
+            }
+            break;
+        }
+        case WGVK_SPV_OP_BRANCH: {
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+static void emit_function_body(WgvkWgslGenerator* gen, WgvkSpvFunction* func) {
+    if (!func) return;
+    
+    for (uint32_t i = 0; i < func->block_count; i++) {
+        WgvkSpvBlock* block = &func->blocks[i];
+        for (uint32_t j = 0; j < block->instruction_count; j++) {
+            emit_instruction(gen, &block->instructions[j]);
+        }
+    }
 }
 
 int wgvk_wgsl_init(WgvkWgslGenerator* gen, WgvkSpvModule* module, uint32_t exec_model) {

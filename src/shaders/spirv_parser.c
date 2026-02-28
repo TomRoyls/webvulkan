@@ -1,7 +1,6 @@
 #include "spirv_parser.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 static uint32_t read_word(WgvkSpvModule* module) {
     if (module->cursor >= module->word_count) return 0;
@@ -40,6 +39,25 @@ static void skip_instruction(WgvkSpvModule* module, uint16_t word_count) {
     module->cursor += word_count - 1;
 }
 
+static void add_instruction_to_block(WgvkSpvModule* module, uint32_t opcode,
+                                      uint32_t result_id, uint32_t result_type_id,
+                                      uint32_t* operands, uint32_t operand_count) {
+    if (!module->current_function) return;
+    if (module->current_function->current_block >= WGVK_MAX_BLOCKS) return;
+    
+    WgvkSpvBlock* block = &module->current_function->blocks[module->current_function->current_block];
+    if (block->instruction_count >= 64) return;
+    
+    WgvkSpvInstruction* inst = &block->instructions[block->instruction_count++];
+    inst->opcode = opcode;
+    inst->result_id = result_id;
+    inst->result_type_id = result_type_id;
+    inst->operand_count = operand_count < 16 ? operand_count : 16;
+    for (uint32_t i = 0; i < inst->operand_count; i++) {
+        inst->operands[i] = operands[i];
+    }
+}
+
 int wgvk_spirv_parse(WgvkSpvModule* module, const uint32_t* code, size_t size) {
     if (!module || !code || size < 5) return -1;
     
@@ -51,9 +69,7 @@ int wgvk_spirv_parse(WgvkSpvModule* module, const uint32_t* code, size_t size) {
     uint32_t magic = read_word(module);
     if (magic != WGVK_SPV_MAGIC) return -1;
     
-    uint32_t version = read_word(module);
-    (void)version;
-    
+    read_word(module);
     read_word(module);
     read_word(module);
     read_word(module);
@@ -73,6 +89,11 @@ int wgvk_spirv_parse(WgvkSpvModule* module, const uint32_t* code, size_t size) {
             case WGVK_SPV_OP_MEMORY_MODEL:
             case WGVK_SPV_OP_SOURCE:
             case WGVK_SPV_OP_EXECUTION_MODE:
+            case WGVK_SPV_OP_NAME:
+            case WGVK_SPV_OP_MEMBER_NAME:
+            case WGVK_SPV_OP_DECORATION_GROUP:
+            case WGVK_SPV_OP_GROUP_DECORATE:
+            case WGVK_SPV_OP_GROUP_MEMBER_DECORATE:
                 skip_instruction(module, word_count);
                 break;
                 
@@ -120,17 +141,7 @@ int wgvk_spirv_parse(WgvkSpvModule* module, const uint32_t* code, size_t size) {
                 break;
             }
             
-            case WGVK_SPV_OP_TYPE_VOID: {
-                if (module->type_count < WGVK_MAX_TYPES && word_count >= 2) {
-                    WgvkSpvType* t = &module->types[module->type_count++];
-                    t->id = read_word(module);
-                    t->op = opcode;
-                } else {
-                    skip_instruction(module, word_count);
-                }
-                break;
-            }
-            
+            case WGVK_SPV_OP_TYPE_VOID:
             case WGVK_SPV_OP_TYPE_BOOL: {
                 if (module->type_count < WGVK_MAX_TYPES && word_count >= 2) {
                     WgvkSpvType* t = &module->types[module->type_count++];
@@ -250,6 +261,19 @@ int wgvk_spirv_parse(WgvkSpvModule* module, const uint32_t* code, size_t size) {
                 break;
             }
             
+            case WGVK_SPV_OP_CONSTANT_TRUE:
+            case WGVK_SPV_OP_CONSTANT_FALSE: {
+                if (module->constant_count < WGVK_MAX_CONSTANTS && word_count >= 3) {
+                    WgvkSpvConstant* c = &module->constants[module->constant_count++];
+                    c->type_id = read_word(module);
+                    c->id = read_word(module);
+                    c->value[0] = (opcode == WGVK_SPV_OP_CONSTANT_TRUE) ? 1 : 0;
+                } else {
+                    skip_instruction(module, word_count);
+                }
+                break;
+            }
+            
             case WGVK_SPV_OP_CONSTANT: {
                 if (module->constant_count < WGVK_MAX_CONSTANTS && word_count >= 4) {
                     WgvkSpvConstant* c = &module->constants[module->constant_count++];
@@ -280,7 +304,7 @@ int wgvk_spirv_parse(WgvkSpvModule* module, const uint32_t* code, size_t size) {
                     c->type_id = read_word(module);
                     c->id = read_word(module);
                     c->component_count = word_count - 3;
-                    for (uint32_t i = 0; i < c->component_count && i < 4; i++) {
+                    for (uint32_t i = 0; i < c->component_count && i < 16; i++) {
                         c->component_ids[i] = read_word(module);
                     }
                 } else {
@@ -295,6 +319,200 @@ int wgvk_spirv_parse(WgvkSpvModule* module, const uint32_t* code, size_t size) {
                     v->type_id = read_word(module);
                     v->storage_class = read_word(module);
                     v->id = read_word(module);
+                } else {
+                    skip_instruction(module, word_count);
+                }
+                break;
+            }
+            
+            case WGVK_SPV_OP_FUNCTION: {
+                if (module->function_count < 64 && word_count >= 5) {
+                    WgvkSpvFunction* f = &module->functions[module->function_count++];
+                    f->result_type_id = read_word(module);
+                    f->id = read_word(module);
+                    read_word(module);
+                    read_word(module);
+                    f->block_count = 0;
+                    f->current_block = 0;
+                    module->current_function = f;
+                } else {
+                    skip_instruction(module, word_count);
+                }
+                break;
+            }
+            
+            case WGVK_SPV_OP_FUNCTION_END: {
+                module->current_function = NULL;
+                break;
+            }
+            
+            case WGVK_SPV_OP_LABEL: {
+                if (module->current_function && module->current_function->block_count < WGVK_MAX_BLOCKS) {
+                    uint32_t label_id = read_word(module);
+                    WgvkSpvBlock* block = &module->current_function->blocks[module->current_function->block_count++];
+                    block->label_id = label_id;
+                    block->instruction_count = 0;
+                    module->current_function->current_block = module->current_function->block_count - 1;
+                } else {
+                    skip_instruction(module, word_count);
+                }
+                break;
+            }
+            
+            case WGVK_SPV_OP_RETURN:
+            case WGVK_SPV_OP_RETURN_VALUE:
+            case WGVK_SPV_OP_BRANCH:
+            case WGVK_SPV_OP_BRANCH_CONDITIONAL:
+            case WGVK_SPV_OP_KILL: {
+                uint32_t operands[16] = {0};
+                uint32_t operand_count = word_count - 1;
+                for (uint32_t i = 0; i < operand_count && i < 16; i++) {
+                    operands[i] = read_word(module);
+                }
+                add_instruction_to_block(module, opcode, 0, 0, operands, operand_count);
+                break;
+            }
+            
+            case WGVK_SPV_OP_FADD:
+            case WGVK_SPV_OP_FSUB:
+            case WGVK_SPV_OP_FMUL:
+            case WGVK_SPV_OP_FDIV:
+            case WGVK_SPV_OP_IADD:
+            case WGVK_SPV_OP_ISUB:
+            case WGVK_SPV_OP_IMUL:
+            case WGVK_SPV_OP_SDIV:
+            case WGVK_SPV_OP_UDIV:
+            case WGVK_SPV_OP_SNEGATE:
+            case WGVK_SPV_OP_FNEGATE:
+            case WGVK_SPV_OP_DOT:
+            case WGVK_SPV_OP_VECTOR_TIMES_SCALAR:
+            case WGVK_SPV_OP_MATRIX_TIMES_VECTOR:
+            case WGVK_SPV_OP_VECTOR_TIMES_MATRIX:
+            case WGVK_SPV_OP_MATRIX_TIMES_MATRIX:
+            case WGVK_SPV_OP_OUTER_PRODUCT:
+            case WGVK_SPV_OP_TRANSPOSE:
+            case WGVK_SPV_OP_LOGICAL_AND:
+            case WGVK_SPV_OP_LOGICAL_OR:
+            case WGVK_SPV_OP_LOGICAL_NOT:
+            case WGVK_SPV_OP_LOGICAL_EQUAL:
+            case WGVK_SPV_OP_LOGICAL_NOT_EQUAL:
+            case WGVK_SPV_OP_F_ORD_EQUAL:
+            case WGVK_SPV_OP_F_ORD_NOT_EQUAL:
+            case WGVK_SPV_OP_F_ORD_LESS_THAN:
+            case WGVK_SPV_OP_F_ORD_GREATER_THAN:
+            case WGVK_SPV_OP_F_ORD_LESS_THAN_EQUAL:
+            case WGVK_SPV_OP_F_ORD_GREATER_THAN_EQUAL:
+            case WGVK_SPV_OP_CONVERT_S_TO_F:
+            case WGVK_SPV_OP_CONVERT_U_TO_F:
+            case WGVK_SPV_OP_CONVERT_F_TO_S:
+            case WGVK_SPV_OP_CONVERT_F_TO_U:
+            case WGVK_SPV_OP_S_CONVERT:
+            case WGVK_SPV_OP_U_CONVERT:
+            case WGVK_SPV_OP_F_CONVERT:
+            case WGVK_SPV_OP_BITCAST:
+            case WGVK_SPV_OP_SELECT:
+            case WGVK_SPV_OP_ISNAN:
+            case WGVK_SPV_OP_ISINF:
+            case WGVK_SPV_OP_BITWISE_OR:
+            case WGVK_SPV_OP_BITWISE_XOR:
+            case WGVK_SPV_OP_BITWISE_AND:
+            case WGVK_SPV_OP_NOT:
+            case WGVK_SPV_OP_SHIFT_LEFT_LOGICAL:
+            case WGVK_SPV_OP_SHIFT_RIGHT_LOGICAL:
+            case WGVK_SPV_OP_SHIFT_RIGHT_ARITHMETIC:
+            {
+                if (word_count >= 4) {
+                    uint32_t result_type = read_word(module);
+                    uint32_t result_id = read_word(module);
+                    uint32_t operands[16] = {0};
+                    uint32_t operand_count = word_count - 4;
+                    for (uint32_t i = 0; i < operand_count && i < 16; i++) {
+                        operands[i] = read_word(module);
+                    }
+                    add_instruction_to_block(module, opcode, result_id, result_type, operands, operand_count);
+                } else {
+                    skip_instruction(module, word_count);
+                }
+                break;
+            }
+            
+            case WGVK_SPV_OP_LOAD: {
+                if (word_count >= 4) {
+                    uint32_t result_type = read_word(module);
+                    uint32_t result_id = read_word(module);
+                    uint32_t operands[16] = {0};
+                    uint32_t operand_count = word_count - 3;
+                    for (uint32_t i = 0; i < operand_count && i < 16; i++) {
+                        operands[i] = read_word(module);
+                    }
+                    add_instruction_to_block(module, opcode, result_id, result_type, operands, operand_count);
+                } else {
+                    skip_instruction(module, word_count);
+                }
+                break;
+            }
+            
+            case WGVK_SPV_OP_STORE: {
+                if (word_count >= 3) {
+                    uint32_t operands[16] = {0};
+                    uint32_t operand_count = word_count - 1;
+                    for (uint32_t i = 0; i < operand_count && i < 16; i++) {
+                        operands[i] = read_word(module);
+                    }
+                    add_instruction_to_block(module, opcode, 0, 0, operands, operand_count);
+                } else {
+                    skip_instruction(module, word_count);
+                }
+                break;
+            }
+            
+            case WGVK_SPV_OP_ACCESS_CHAIN:
+            case WGVK_SPV_OP_IN_BOUNDS_ACCESS_CHAIN: {
+                if (word_count >= 4) {
+                    uint32_t result_type = read_word(module);
+                    uint32_t result_id = read_word(module);
+                    uint32_t operands[16] = {0};
+                    uint32_t operand_count = word_count - 3;
+                    for (uint32_t i = 0; i < operand_count && i < 16; i++) {
+                        operands[i] = read_word(module);
+                    }
+                    add_instruction_to_block(module, opcode, result_id, result_type, operands, operand_count);
+                } else {
+                    skip_instruction(module, word_count);
+                }
+                break;
+            }
+            
+            case WGVK_SPV_OP_COMPOSITE_EXTRACT:
+            case WGVK_SPV_OP_COMPOSITE_INSERT:
+            case WGVK_SPV_OP_VECTOR_SHUFFLE:
+            case WGVK_SPV_OP_COPY_OBJECT: {
+                if (word_count >= 4) {
+                    uint32_t result_type = read_word(module);
+                    uint32_t result_id = read_word(module);
+                    uint32_t operands[16] = {0};
+                    uint32_t operand_count = word_count - 3;
+                    for (uint32_t i = 0; i < operand_count && i < 16; i++) {
+                        operands[i] = read_word(module);
+                    }
+                    add_instruction_to_block(module, opcode, result_id, result_type, operands, operand_count);
+                } else {
+                    skip_instruction(module, word_count);
+                }
+                break;
+            }
+            
+            case WGVK_SPV_OP_IMAGE_SAMPLE_IMPLICIT_LOD:
+            case WGVK_SPV_OP_IMAGE: {
+                if (word_count >= 4) {
+                    uint32_t result_type = read_word(module);
+                    uint32_t result_id = read_word(module);
+                    uint32_t operands[16] = {0};
+                    uint32_t operand_count = word_count - 3;
+                    for (uint32_t i = 0; i < operand_count && i < 16; i++) {
+                        operands[i] = read_word(module);
+                    }
+                    add_instruction_to_block(module, opcode, result_id, result_type, operands, operand_count);
                 } else {
                     skip_instruction(module, word_count);
                 }
@@ -357,4 +575,13 @@ const char* wgvk_spirv_get_entry_name(WgvkSpvModule* module, uint32_t exec_model
         }
     }
     return "main";
+}
+
+WgvkSpvFunction* wgvk_spirv_get_function(WgvkSpvModule* module, uint32_t id) {
+    for (uint32_t i = 0; i < module->function_count; i++) {
+        if (module->functions[i].id == id) {
+            return &module->functions[i];
+        }
+    }
+    return NULL;
 }

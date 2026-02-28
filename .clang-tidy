@@ -1,0 +1,67 @@
+# WebVulkan Clang-Tidy Configuration
+# Focuses on safety, modern C practices, and bug prevention
+
+---
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-implicit-widening-of-multiplication-result,
+  concurrency-*,
+  -concurrency-mt-unsafe,
+  misc-*,
+  -misc-non-private-member-variables-in-classes,
+  modernize-*,
+  -modernize-deprecated-headers,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  readability-*,
+  -readability-else-after-return,
+  -readability-function-cognitive-complexity,
+  -readability-function-size,
+  -readability-identifier-length,
+  -readability-identifier-naming,
+  -readability-implicit-bool-conversion,
+  -readability-isolate-declaration,
+  -readability-magic-numbers,
+  -readability-uppercase-literal-suffix,
+  -readability-use-anyofallof
+
+WarningsAsErrors: ''
+
+HeaderFilterRegex: '.*'
+
+CheckOptions:
+  - key: readability-braces-around-statements.ShortStatementLines
+    value: '1'
+  - key: readability-const-return-type.AllowMixedConstness
+    value: 'true'
+  - key: readability-convert-member-functions-to-static.IgnoreVirtual
+    value: 'true'
+  - key: readability-simplify-boolean-expr.ChainedConditionalReturn
+    value: 'false'
+  - key: readability-simplify-boolean-expr.ChainedConditionalAssignment
+    value: 'false'
+  - key: modernize-loop-convert.MinConfidence
+    value: reasonable
+  - key: modernize-loop-convert.NamingStyle
+    value: CamelCase
+  - key: modernize-use-auto.MinTypeNameLength
+    value: '5'
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL'
+  - key: performance-move-const-arg.CheckTriviallyCopyableMove
+    value: 'true'
+  - key: performance-type-promotion-in-math-fn.IncludeStyle
+    value: llvm
+  - key: bugprone-argument-comment.StrictMode
+    value: 'false'
+  - key: bugprone-sizeof-expression.WarnOnSizeOfIntegerExpression
+    value: 'true'
+  - key: bugprone-sizeof-expression.WarnOnSizeOfCompareToIntegerExpression
+    value: 'true'
+  - key: bugprone-macro-parentheses.IgnoreIdentifierOnly
+    value: 'true'
+  - key: concurrency-thread-canceltype-as-check.WarnOnNoThreadSupport
+    value: 'false'
+...
